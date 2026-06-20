@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Equipo Patricio Pinilla · Accesos Legislativos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16243a; --ink2:#1f3552;
+    --bg:#e9edf2; --card:#ffffff;
+    --teal:#0f766e; --teal-d:#0b5b54;
+    --blue:#1e3a5f; --blue-d:#16294a;
+    --amber:#d98324;
+    --text:#2b3a4f; --muted:#7c8aa0; --line:#dde3ec;
+    --shadow:0 1px 3px rgba(22,36,58,.07), 0 10px 30px rgba(22,36,58,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  a{text-decoration:none;color:inherit}
+
+  /* ===== Masthead ===== */
+  .masthead{
+    background:
+      radial-gradient(120% 140% at 85% -10%, #243a5c 0%, transparent 55%),
+      linear-gradient(180deg,var(--ink) 0%, var(--ink2) 100%);
+    color:#fff;
+    padding:44px 24px 38px;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;
+    background:linear-gradient(90deg,var(--amber) 0%, var(--amber) 64px, transparent 64px);
+  }
+  .mast-inner{max-width:920px;margin:0 auto}
+  .eyebrow{
+    font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+    color:#9fb4d0;margin-bottom:10px;
+  }
+  .mast-title{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.02;
+    letter-spacing:-.01em;color:#fff;
+  }
+  .mast-sub{
+    margin-top:12px;font-size:14.5px;color:#b9c7dc;font-weight:400;
+    display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
+  }
+  .mast-sub .dot{width:4px;height:4px;border-radius:50%;background:#52688a}
+  .pill{
+    display:inline-block;border:1px solid #3a5079;color:#cdd9ea;
+    border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:500;
+  }
+
+  /* ===== Main ===== */
+  main{flex:1;max-width:920px;width:100%;margin:0 auto;padding:34px 24px 8px}
+  .section-label{
+    display:flex;align-items:center;gap:12px;
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin:8px 2px 16px;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+  .section-label.mt{margin-top:30px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 22px 20px;display:flex;flex-direction:column;gap:0;
+    box-shadow:var(--shadow);position:relative;
+    border-left:4px solid var(--accent,var(--teal));
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    outline:none;
+  }
+  .card:hover,.card:focus-visible{
+    transform:translateY(-3px);
+    box-shadow:0 4px 10px rgba(22,36,58,.10), 0 18px 40px rgba(22,36,58,.12);
+  }
+  .card:focus-visible{box-shadow:0 0 0 3px #fff, 0 0 0 5.5px var(--accent,var(--teal))}
+  .card-top{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+  .icon{
+    width:42px;height:42px;border-radius:11px;flex-shrink:0;
+    display:grid;place-items:center;color:#fff;background:var(--accent,var(--teal));
+  }
+  .icon svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+  .card p{font-size:13.5px;color:var(--muted);margin-top:1px}
+  .card .desc{font-size:13.5px;color:var(--text);margin-bottom:16px}
+  .card .open{
+    margin-top:auto;display:inline-flex;align-items:center;gap:7px;
+    font-size:13px;font-weight:600;color:var(--accent,var(--teal));
+  }
+  .card .open svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ===== Footer ===== */
+  footer{
+    max-width:920px;margin:0 auto;width:100%;
+    padding:26px 24px 34px;margin-top:18px;
+    border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--muted);line-height:1.7;
+  }
+  footer b{color:var(--text);font-weight:600}
+  footer .src{color:var(--muted)}
+
+  @media (prefers-reduced-motion:reduce){
+    .card{transition:none}
+    .card:hover,.card:focus-visible{transform:none}
+  }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="mast-inner">
+      <div class="eyebrow">Equipo Legislativo</div>
+      <div class="mast-title">Patricio Pinilla</div>
+      <div class="mast-sub">
+        <span class="pill">Diputado</span>
+        <span>Distrito 21</span><span class="dot"></span>
+        <span>Región del Biobío</span><span class="dot"></span>
+        <span>Partido Demócrata Cristiano</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="section-label">Sala de la Cámara</div>
+    <div class="grid">
+
+      <a class="card" style="--accent:var(--teal)" href="https://www.camara.cl/verDoc.aspx?prmId=0&prmTipo=TABLASEMANAL" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h2M14 13h2M8 17h2M14 17h2"/></svg></span>
+          <div><h3>Tabla Semanal</h3><p>Orden del día de la semana</p></div>
+        </div>
+        <div class="desc">Los proyectos y materias agendados para las sesiones de Sala de la semana en curso.</div>
+        <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+      <a class="card" style="--accent:var(--teal)" href="https://www.camara.cl/sala/default.aspx" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="2.4"/></svg></span>
+          <div><h3>Tabla del día</h3><p>Sesión más cercana</p></div>
+        </div>
+        <div class="desc">El trabajo en Sala de la sesión vigente: orden del día, cuenta y documentos sobre tabla.</div>
+        <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+    </div>
+
+    <div class="section-label mt">Citaciones de Comisiones</div>
+    <div class="grid">
+
+      <a class="card" style="--accent:var(--blue)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=1712&prmIdTipo=2101" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>
+          <div><h3>Comisión de Trabajo</h3><p>Trabajo y Seguridad Social</p></div>
+        </div>
+        <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
+        <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+      <a class="card" style="--accent:var(--blue)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=4903&prmIdTipo=2101" target="_blank" rel="noopener">
+        <div class="card-top">
+          <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 4.5 3.2 8.3 8 9.8 4.8-1.5 8-5.3 8-9.8V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div><h3>Comisión de Seguridad</h3><p>Seguridad Ciudadana</p></div>
+        </div>
+        <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
+        <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="src">Los accesos abren las páginas oficiales de la <b>Cámara de Diputadas y Diputados de Chile</b> (camara.cl), que se actualizan en tiempo real. Esta página solo enlaza esas fuentes.</div>
+    <div style="margin-top:10px">Sitio creado por <b>José Camilo Carte Hernández</b>, Asesor Legislativo.</div>
+  </footer>
+
+</body>
+</html>
