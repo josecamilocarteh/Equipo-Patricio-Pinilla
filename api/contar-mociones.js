@@ -37,7 +37,7 @@ function normalizar(str) {
 // Parser XML simple por regex (sin librerías externas, igual estilo que
 // el resto del proyecto Congreso Chile para no agregar dependencias).
 function extraerTags(xml, tag) {
-  const regex = new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`, "g");
+  const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`, "g");
   const out = [];
   let m;
   while ((m = regex.exec(xml)) !== null) out.push(m[1]);
@@ -45,7 +45,9 @@ function extraerTags(xml, tag) {
 }
 
 function extraerTag(xml, tag) {
-  const m = xml.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
+  // [^>]* permite (e ignora) atributos como Valor="1" dentro de la etiqueta de apertura,
+  // ej. <CamaraOrigen Valor="1">Cámara de Diputados</CamaraOrigen>
+  const m = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)</${tag}>`));
   return m ? m[1].trim() : "";
 }
 
