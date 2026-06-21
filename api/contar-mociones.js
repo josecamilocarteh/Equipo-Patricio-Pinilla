@@ -60,15 +60,29 @@ async function fetchXML(url) {
 export default async function handler(req, res) {
   const anno = parseInt(req.query.anno, 10) || new Date().getFullYear();
 
+  // El período legislativo 2026-2030 (de estos 5 diputados del Distrito 21)
+  // comenzó el 11 de marzo de 2026. Antes de esa fecha, el distrito tenía
+  // otros representantes (período 2022-2026) — por eso se excluyen esas
+  // mociones de enero/febrero, aunque retornarMocionesXAnno las incluya
+  // por venir dentro del mismo año calendario.
+  const INICIO_PERIODO = new Date("2026-03-11T00:00:00");
+
   try {
     // 1. Lista completa de mociones del año
     const listaXML = await fetchXML(`${BASE}/retornarMocionesXAnno?prmAnno=${anno}`);
     const proyectos = extraerTags(listaXML, "ProyectoLey");
 
     // Solo nos interesan las mociones originadas en la Cámara de Diputados
-    // (las del Senado no las firman diputados de la Cámara).
+    // (las del Senado no las firman diputados de la Cámara) Y presentadas
+    // dentro del período legislativo actual (desde el 11-03-2026 en adelante).
     const boletines = proyectos
       .filter((p) => extraerTag(p, "CamaraOrigen").includes("Cámara"))
+      .filter((p) => {
+        const fechaStr = extraerTag(p, "FechaIngreso");
+        if (!fechaStr) return false;
+        const fecha = new Date(fechaStr);
+        return fecha >= INICIO_PERIODO;
+      })
       .map((p) => extraerTag(p, "NumeroBoletin"))
       .filter(Boolean);
 
