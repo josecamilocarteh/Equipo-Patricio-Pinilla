@@ -11,10 +11,14 @@
 import contarMociones from "./contar-mociones.js";
 
 export default async function handler(req, res) {
-  // Seguridad simple: Vercel Cron manda este header en las llamadas programadas.
-  // Si alguien intenta llamar este endpoint directo sin ser el cron, lo rechazamos.
+  // Seguridad: deja pasar a Vercel Cron (manda este header en llamadas programadas)
+  // O a quien conozca la clave secreta CRON_SECRET, para pruebas manuales
+  // (ej. ?secreto=loquesea en la URL).
   const esVercelCron = req.headers["x-vercel-cron"] !== undefined;
-  if (!esVercelCron && process.env.NODE_ENV === "production") {
+  const claveCorrecta =
+    process.env.CRON_SECRET && req.query.secreto === process.env.CRON_SECRET;
+
+  if (!esVercelCron && !claveCorrecta) {
     return res.status(401).json({ error: "No autorizado" });
   }
 
