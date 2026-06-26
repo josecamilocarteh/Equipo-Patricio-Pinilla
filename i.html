@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Equipo Patricio Pinilla · Accesos Legislativos</title>
+
+<!-- ===== PWA: instalación como app ===== -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1f3552">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pinilla">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16243a; --ink2:#1f3552;
+    --bg:#e9edf2; --card:#ffffff;
+    --teal:#0f766e; --teal-d:#0b5b54;
+    --blue:#1e3a5f; --blue-d:#16294a;
+    --amber:#d98324;
+
+    /* Colores por botón */
+    --yellow:#c9941f; --yellow-d:#a87a14;
+    --pink:#c2447a; --pink-d:#a13564;
+    --red:#c23b3b; --red-d:#a32e2e;
+    --green:#2f8f4e; --green-d:#226e3a;
+
+    /* Colores del ranking (uno por diputado) */
+    --rk-pinilla:#1e3a5f;
+    --rk-perez:#0f766e;
+    --rk-weisse:#c2447a;
+    --rk-urruti:#c9941f;
+    --rk-betancurt:#7a4fc2;
+
+    --text:#2b3a4f; --muted:#7c8aa0; --line:#dde3ec;
+    --shadow:0 1px 3px rgba(22,36,58,.07), 0 10px 30px rgba(22,36,58,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+  }
+  a{text-decoration:none;color:inherit}
+
+  /* ===== Masthead ===== */
+  .masthead{
+    background:
+      radial-gradient(120% 140% at 85% -10%, #243a5c 0%, transparent 55%),
+      linear-gradient(180deg,var(--ink) 0%, var(--ink2) 100%);
+    color:#fff;
+    padding:44px 24px 38px;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;
+    background:linear-gradient(90deg,var(--amber) 0%, var(--amber) 64px, transparent 64px);
+  }
+  .mast-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+    flex-wrap:wrap;
+  }
+  .mast-left{flex:1;min-width:240px}
+  .mast-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
+  .mast-row{display:flex;align-items:center;gap:18px}
+  .mast-photo{
+    width:60px;height:60px;border-radius:50%;flex-shrink:0;
+    object-fit:cover;object-position:center top;
+    border:2px solid rgba(255,255,255,.55);
+    box-shadow:0 4px 14px rgba(0,0,0,.22);
+  }
+  @media(max-width:640px){
+    .mast-photo{width:48px;height:48px}
+  }
+  @media(max-width:480px){
+    .mast-photo{width:42px;height:42px}
+    .mast-right{gap:10px}
+  }
+  .eyebrow{
+    font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+    color:#9fb4d0;margin-bottom:10px;
+  }
+  .mast-title{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.02;
+    letter-spacing:-.01em;color:#fff;
+  }
+  @media(max-width:480px){
+    }
+  .mast-sub{
+    margin-top:12px;font-size:14.5px;color:#b9c7dc;font-weight:400;
+    display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
+  }
+  .mast-sub .dot{width:4px;height:4px;border-radius:50%;background:#52688a}
+  .pill{
+    display:inline-block;border:1px solid #3a5079;color:#cdd9ea;
+    border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:500;
+  }
+
+  /* ===== Layout principal: contenido + panel lateral ===== */
+  .layout{
+    flex:1;max-width:1180px;width:100%;margin:0 auto;
+    padding:34px 24px 8px;
+    display:grid;grid-template-columns:1fr 320px;gap:28px;
+    align-items:start;
+  }
+  @media(max-width:980px){
+    .layout{grid-template-columns:1fr}
+  }
+
+  .section-label{
+    display:flex;align-items:center;gap:12px;
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin:8px 2px 16px;
+  }
+  .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+  .section-label.mt{margin-top:30px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px 22px 20px;display:flex;flex-direction:column;gap:0;
+    box-shadow:var(--shadow);position:relative;
+    border-left:4px solid var(--accent,var(--teal));
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    outline:none;
+  }
+  .card:hover,.card:focus-visible{
+    transform:translateY(-3px);
+    box-shadow:0 4px 10px rgba(22,36,58,.10), 0 18px 40px rgba(22,36,58,.12);
+  }
+  .card:focus-visible{box-shadow:0 0 0 3px #fff, 0 0 0 5.5px var(--accent,var(--teal))}
+  .card-top{display:flex;align-items:center;gap:13px;margin-bottom:13px}
+  .icon{
+    width:42px;height:42px;border-radius:11px;flex-shrink:0;
+    display:grid;place-items:center;color:#fff;background:var(--accent,var(--teal));
+  }
+  .icon svg{width:22px;height:22px;stroke:#fff;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .card h3{font-size:16.5px;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.2}
+  .card p{font-size:13.5px;color:var(--muted);margin-top:1px}
+  .card .desc{font-size:13.5px;color:var(--text);margin-bottom:16px}
+  .card .open{
+    margin-top:auto;display:inline-flex;align-items:center;gap:7px;
+    font-size:13px;font-weight:600;color:var(--accent,var(--teal));
+  }
+  .card .open svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ===== Panel de Ranking de Mociones ===== */
+  .panel{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;box-shadow:var(--shadow);
+    position:sticky;top:24px;
+  }
+  @media(max-width:980px){ .panel{position:static} }
+
+  .panel-head{margin-bottom:4px}
+  .panel-head h3{
+    font-family:'Fraunces',Georgia,serif;font-weight:600;
+    font-size:19px;color:var(--ink);letter-spacing:-.01em;
+  }
+  .panel-head p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5}
+
+  .rank-list{margin-top:18px;display:flex;flex-direction:column;gap:14px}
+  .rank-item{display:flex;flex-direction:column;gap:6px}
+  .rank-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .rank-name{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--ink)}
+  .rank-name .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .rank-name .you{
+    font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:#fff;background:var(--ink2);border-radius:5px;padding:1px 6px;margin-left:2px;
+  }
+  .rank-count{font-size:13.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
+  .rank-track{height:8px;border-radius:6px;background:var(--bg);overflow:hidden}
+  .rank-fill{height:100%;border-radius:6px;transition:width .5s ease}
+
+  .panel-foot{
+    margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
+    font-size:11.5px;color:var(--muted);line-height:1.6;
+  }
+
+  /* ===== Footer ===== */
+  footer{
+    max-width:1180px;margin:0 auto;width:100%;
+    padding:26px 24px 34px;margin-top:18px;
+    border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--muted);line-height:1.7;
+  }
+  footer b{color:var(--text);font-weight:600}
+  footer .src{color:var(--muted)}
+
+  @media (prefers-reduced-motion:reduce){
+    .card{transition:none}
+    .card:hover,.card:focus-visible{transform:none}
+    .rank-fill{transition:none}
+  }
+</style>
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="mast-inner">
+      <div class="mast-left">
+      <div class="mast-row">
+        <div>
+          <div class="eyebrow">Equipo Legislativo</div>
+          <div class="mast-title">Patricio Pinilla</div>
+        </div>
+      </div>
+      <div class="mast-sub">
+        <span class="pill">Diputado</span>
+        <span>Distrito 21</span><span class="dot"></span>
+        <span>Región del Biobío</span><span class="dot"></span>
+        <span>Partido Demócrata Cristiano</span>
+      </div>
+      </div>
+      <div class="mast-right">
+        <img class="mast-photo" src="data:image/jpeg;base64,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" alt="Foto del diputado Patricio Pinilla">
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- ===== Columna principal: accesos ===== -->
+    <main>
+      <div class="section-label">Sala de la Cámara</div>
+      <div class="grid">
+
+        <a class="card" style="--accent:var(--yellow)" href="https://www.camara.cl/verDoc.aspx?prmId=0&prmTipo=TABLASEMANAL" target="_blank" rel="noopener">
+          <div class="card-top">
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h2M14 13h2M8 17h2M14 17h2"/></svg></span>
+            <div><h3>Tabla Semanal</h3><p>Orden del día de la semana</p></div>
+          </div>
+          <div class="desc">Los proyectos y materias agendados para las sesiones de Sala de la semana en curso.</div>
+          <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </a>
+
+        <a class="card" style="--accent:var(--pink)" href="https://www.camara.cl/sala/default.aspx" target="_blank" rel="noopener">
+          <div class="card-top">
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="2.4"/></svg></span>
+            <div><h3>Tabla del día</h3><p>Sesión más cercana</p></div>
+          </div>
+          <div class="desc">El trabajo en Sala de la sesión vigente: orden del día, cuenta y documentos sobre tabla.</div>
+          <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </a>
+
+      </div>
+
+      <div class="section-label mt">Citaciones de Comisiones</div>
+      <div class="grid">
+
+        <a class="card" style="--accent:var(--red)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=1712&prmIdTipo=2101" target="_blank" rel="noopener">
+          <div class="card-top">
+            <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>
+            <div><h3>Comisión de Trabajo</h3><p>Trabajo y Seguridad Social</p></div>
+          </div>
+          <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
+          <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </a>
+
+        <a class="card" style="--accent:var(--green)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=4903&prmIdTipo=2101" target="_blank" rel="noopener">
+          <div class="card-top">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 4.5 3.2 8.3 8 9.8 4.8-1.5 8-5.3 8-9.8V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+            <div><h3>Comisión de Seguridad</h3><p>Seguridad Ciudadana</p></div>
+          </div>
+          <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
+          <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </a>
+
+      </div>
+
+      <div class="section-label mt">Actividad Legislativa</div>
+      <div class="grid">
+
+        <a class="card" style="--accent:var(--blue)" href="https://www.camara.cl/diputados/detalle/mociones.aspx?prmId=1241" target="_blank" rel="noopener">
+          <div class="card-top">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M9 2h6l1 4H8l1-4Z"/><path d="M7 6h10l1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L7 6Z"/><path d="M10 11h4M10 15h4"/></svg></span>
+            <div><h3>Mociones</h3><p>Proyectos de ley de Pinilla</p></div>
+          </div>
+          <div class="desc">Listado oficial de mociones presentadas por el diputado Patricio Pinilla en la Cámara.</div>
+          <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        </a>
+
+      </div>
+    </main>
+
+    <!-- ===== Panel lateral: ranking de mociones ===== -->
+    <aside class="panel" aria-label="Ranking de mociones del Distrito 21">
+      <div class="panel-head">
+        <h3>Mociones · Distrito 21</h3>
+        <p>Proyectos de ley presentados por cada diputado/a en el período 2026–2030.</p>
+      </div>
+
+      <div class="rank-list" id="rankList"></div>
+
+      <div class="panel-foot">
+        Fuente: Cámara de Diputadas y Diputados de Chile (camara.cl). Se actualiza automáticamente una vez al día.
+        <div id="rankFecha" style="margin-top:4px;font-weight:600"></div>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="src">Los accesos abren las páginas oficiales de la <b>Cámara de Diputadas y Diputados de Chile</b> (camara.cl), que se actualizan en tiempo real. Esta página solo enlaza esas fuentes.</div>
+    <div style="margin-top:10px">Sitio creado por <b>José Camilo Carte Hernández</b>, Asesor Legislativo.</div>
+  </footer>
+
+  <script>
+    // ===== Ranking de mociones (Distrito 21) — datos en vivo =====
+    // Se consulta /api/mociones, que lee un Gist actualizado automáticamente
+    // una vez al día por un cron job (ver /api/cron-mociones.js).
+    // Si la consulta falla por cualquier motivo, se usan estos datos de
+    // respaldo (los últimos conocidos a mano) para que el panel nunca quede vacío.
+
+    const MOCIONES_RESPALDO = [
+      { nombre: "Patricio Pinilla", mociones: 12 },
+      { nombre: "Joanna Pérez", mociones: 7 },
+      { nombre: "Flor Weisse", mociones: 6 },
+      { nombre: "Cristóbal Urruticoechea", mociones: 4 },
+      { nombre: "Lilian Betancurt", mociones: 3 },
+    ];
+
+    // Colores por nombre (deben coincidir con las variables --rk-* del CSS)
+    const COLOR_POR_NOMBRE = {
+      "Patricio Pinilla": "var(--rk-pinilla)",
+      "Joanna Pérez": "var(--rk-perez)",
+      "Flor Weisse": "var(--rk-weisse)",
+      "Cristóbal Urruticoechea": "var(--rk-urruti)",
+      "Lilian Betancurt": "var(--rk-betancurt)",
+    };
+
+    function renderRanking(data, actualizado){
+      const ordenado = [...data].sort((a,b) => b.mociones - a.mociones);
+      const max = Math.max(...ordenado.map(d => d.mociones), 1);
+      const list = document.getElementById("rankList");
+
+      list.innerHTML = ordenado.map(d => {
+        const color = COLOR_POR_NOMBRE[d.nombre] || "var(--muted)";
+        const esPinilla = d.nombre === "Patricio Pinilla";
+        return `
+        <div class="rank-item">
+          <div class="rank-row">
+            <span class="rank-name">
+              <span class="dot" style="background:${color}"></span>
+              ${d.nombre}
+              ${esPinilla ? '<span class="you">Nuestro diputado</span>' : ''}
+            </span>
+            <span class="rank-count">${d.mociones}</span>
+          </div>
+          <div class="rank-track">
+            <div class="rank-fill" style="width:${(d.mociones / max * 100).toFixed(0)}%; background:${color}"></div>
+          </div>
+        </div>
+      `;
+      }).join("");
+
+      const footEl = document.getElementById("rankFecha");
+      if (footEl && actualizado) {
+        const fecha = new Date(actualizado);
+        footEl.textContent = "Última actualización: " + fecha.toLocaleDateString("es-CL", {
+          day: "numeric", month: "long", year: "numeric"
+        });
+      }
+    }
+
+    async function cargarRanking(){
+      try {
+        const resp = await fetch("/api/mociones");
+        const data = await resp.json();
+        if (data.error || !data.ranking) throw new Error(data.mensaje || "Sin datos");
+        renderRanking(data.ranking, data.actualizado);
+      } catch (e) {
+        // Si falla la API (aún no configurada, o sin conexión), usamos el respaldo.
+        renderRanking(MOCIONES_RESPALDO, null);
+      }
+    }
+
+    cargarRanking();
+  </script>
+
+  <script>
+    // ===== PWA: registrar el service worker (soporte offline) =====
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/service-worker.js").catch((err) => {
+          console.error("No se pudo registrar el service worker:", err);
+        });
+      });
+    }
+  </script>
+
+</body>
+</html>
