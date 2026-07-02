@@ -22,6 +22,8 @@
 // el navegador del visitante — la usa /api/cron-mociones.js una vez al día,
 // y el resultado se guarda en un Gist.
 
+import { diputados as DIPUTADOS_ESTATICOS } from "./datos-diputados.js";
+
 const BASE = "https://opendata.camara.cl/camaradiputados/WServices/WSLegislativo.asmx";
 const DIP_BASE = "https://opendata.camara.cl/camaradiputados/WServices/WSDiputado.asmx";
 
@@ -73,41 +75,28 @@ async function fetchXML(url) {
   return await res.text();
 }
 
-// De la lista de <Militancia> de un diputado, determina cuál es la vigente
-// ahora mismo: la que tiene la FechaInicio más reciente que ya pasó.
-// (Confirmado con datos reales: NO existe un campo <Distrito> en esta
-// respuesta, así que no se puede sacar distrito de aquí. Sí existen
-// <Militancias><Militancia><FechaInicio/><FechaTermino/><Partido/></Militancia></Militancias>.)
-function obtenerPartidoVigente(dipXml) {
-  const militanciasXml = extraerTag(dipXml, "Militancias");
-  if (!militanciasXml) return null;
-  const militancias = extraerTags(militanciasXml, "Militancia");
-
-  const ahora = new Date();
-  let mejor = null;
-
-  militancias.forEach((m) => {
-    const inicioStr = extraerTag(m, "FechaInicio");
-    if (!inicioStr) return;
-    const inicio = new Date(inicioStr);
-    if (isNaN(inicio) || inicio > ahora) return; // aún no empieza, no cuenta
-    if (!mejor || inicio > mejor.inicio) {
-      const partidoXml = extraerTag(m, "Partido");
-      if (!partidoXml) return;
-      mejor = {
-        inicio,
-        id: extraerTag(partidoXml, "Id") || "IND",
-        nombre: extraerTag(partidoXml, "Nombre") || "Independientes",
-        alias: extraerTag(partidoXml, "Alias") || "IND",
-      };
-    }
-  });
-
-  return mejor ? { id: mejor.id, nombre: mejor.nombre, alias: mejor.alias } : null;
+// Busca a un diputado dentro del dataset ESTÁTICO curado a mano (mismo que
+// usa https://github.com/josecamilocarteh/Congreso-Chile), cruzando por
+// apellido paterno + nombre de pila (normalizados, sin tildes). Ese dataset
+// es la fuente de verdad para distrito y partido, porque la API oficial de
+// la Cámara (retornarDiputadosPeriodoActual) no entrega distrito y su dato
+// de partido puede no coincidir con la nomenclatura que usamos en el resto
+// del proyecto.
+function buscarEnDatosEstaticos(apellidoPaterno, nombrePila) {
+  const apN = normalizar(apellidoPaterno);
+  const noN = normalizar(nombrePila);
+  if (!apN || !noN) return null;
+  return (
+    DIPUTADOS_ESTATICOS.find((d) => {
+      const nombreN = normalizar(d.nombre);
+      return nombreN.includes(apN) && nombreN.includes(noN);
+    }) || null
+  );
 }
 
 // Trae los diputados que están en ejercicio ahora mismo (155), con su
-// nombre, apellidos y partido vigente. Una sola llamada.
+// nombre y apellidos desde la API, enriquecidos con distrito/partido desde
+// el dataset estático. Una sola llamada a la API.
 async function obtenerDiputadosActuales() {
   const xml = await fetchXML(`${DIP_BASE}/retornarDiputadosPeriodoActual`);
   const bloques = extraerTags(xml, "DiputadoPeriodo");
@@ -123,7 +112,6 @@ async function obtenerDiputadosActuales() {
     const nombrePila = extraerTag(dipXml, "Nombre");
     const apellidoPaterno = extraerTag(dipXml, "ApellidoPaterno");
     const apellidoMaterno = extraerTag(dipXml, "ApellidoMaterno");
-    const partido = obtenerPartidoVigente(dipXml);
 
     if (!id || !apellidoPaterno || !nombrePila) return;
 
@@ -131,7 +119,20 @@ async function obtenerDiputadosActuales() {
       .filter(Boolean)
       .join(" ");
 
-    const info = { id, nombre: nombreCompleto, apellidoPaterno, nombrePila, partido };
+    const estatico = buscarEnDatosEstaticos(apellidoPaterno, nombrePila);
+    const partido = estatico ? estatico.partido : null; // ej. "UDI", "RN", "Independiente"...
+    const distrito = estatico ? estatico.distrito : null;
+    const region = estatico ? estatico.region : null;
+
+    const info = {
+      id,
+      nombre: nombreCompleto,
+      apellidoPaterno,
+      nombrePila,
+      partido,
+      distrito,
+      region,
+    };
     lista.push(info);
 
     const clave = claveNombre(apellidoPaterno, nombrePila);
@@ -236,7 +237,9 @@ export default async function handler(req, res) {
       .map((d) => ({
         id: d.id,
         nombre: d.nombre,
-        partido: d.partido, // { id, nombre, alias } o null
+        partido: d.partido, // ej. "UDI", "RN", "Independiente"... o null si no hubo cruce
+        distrito: d.distrito, // 1-28, o null si no hubo cruce
+        region: d.region,
         mociones: conteoGeneral[d.id] || 0,
         esPinilla:
           normalizar(d.apellidoPaterno) === "pinilla" && normalizar(d.nombrePila) === "patricio",
