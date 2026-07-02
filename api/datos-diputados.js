@@ -1,0 +1,215 @@
+// /api/datos-diputados.js
+//
+// Dataset curado a mano (mismo que usa https://github.com/josecamilocarteh/Congreso-Chile),
+// con distrito, partido y región de cada diputado/a en ejercicio 2026-2030.
+// Se usa para enriquecer el ranking general con distrito y partido, ya que la
+// API de la Cámara (retornarDiputadosPeriodoActual) NO entrega distrito.
+//
+// El conteo de mociones sigue siendo 100% en vivo desde la API; este archivo
+// solo aporta distrito/partido/color, no números de mociones.
+
+export const PARTIDO_COLORS = {
+  'RN': '#1d6fce',
+  'UDI': '#f59e0b',
+  'Republicano': '#1e3a8a',
+  'Evópoli': '#06b6d4',
+  'DEM': '#9ca3af',
+  'PS': '#dc2626',
+  'PPD': '#f97316',
+  'PDC': '#e879a0',
+  'PC': '#7f1d1d',
+  'FA': '#7c3aed',
+  'FREVS': '#22c55e',
+  'Liberal': '#fbbf24',
+  'Independiente': '#e5e7eb',
+  'PDG': '#ea580c',
+  'PNL': '#0ea5e9',
+  'AH': '#10b981',
+  'PSC': '#f43f5e',
+}
+
+export const diputados = [
+  // D1 - Arica y Parinacota
+  { nombre: 'Luis Malla Valenzuela', partido: 'Liberal', bloque: 'Oposición', region: 'Arica y Parinacota', distrito: 1, votos: 29127, porcentaje: '21,54%' },
+  { nombre: 'Jorge Díaz Ibarra', partido: 'PDC', bloque: 'Oposición', region: 'Arica y Parinacota', distrito: 1, votos: 18558, porcentaje: '13,72%' },
+  { nombre: 'Stephanie Jéldrez Ortiz', partido: 'Republicano', bloque: 'Oficialismo', region: 'Arica y Parinacota', distrito: 1, votos: 12471, porcentaje: '9,22%' },
+  // D2 - Tarapacá
+  { nombre: 'Carlos Carvajal Gallardo', partido: 'PPD', bloque: 'Oposición', region: 'Tarapacá', distrito: 2, votos: 25360, porcentaje: '13,89%' },
+  { nombre: 'Ximena Naranjo Pinto', partido: 'UDI', bloque: 'Oficialismo', region: 'Tarapacá', distrito: 2, votos: 19298, porcentaje: '10,57%' },
+  { nombre: 'Álvaro Jofré Cáceres', partido: 'PNL', bloque: 'Oficialismo', region: 'Tarapacá', distrito: 2, votos: 17898, porcentaje: '8,16%' },
+  // D3 - Antofagasta
+  { nombre: 'Sebastián Videla Castillo', partido: 'Liberal', bloque: 'Oposición', region: 'Antofagasta', distrito: 3, votos: 74340, porcentaje: '23,31%' },
+  { nombre: 'Jaime Araya Guerrero', partido: 'PPD', bloque: 'Oposición', region: 'Antofagasta', distrito: 3, votos: 13604, porcentaje: '4,27%' },
+  { nombre: 'Marcela Hernando Pérez', partido: 'Liberal', bloque: 'Oposición', region: 'Antofagasta', distrito: 3, votos: 11944, porcentaje: '3,74%' },
+  { nombre: 'Fabián Ossandón Briceño', partido: 'PDG', bloque: 'Independiente', region: 'Antofagasta', distrito: 3, votos: 33161, porcentaje: '10,40%' },
+  { nombre: 'Carlo Arquero Pizarro', partido: 'Republicano', bloque: 'Oficialismo', region: 'Antofagasta', distrito: 3, votos: 12464, porcentaje: '3,91%' },
+  // D4 - Atacama
+  { nombre: 'Jaime Mulet Martínez', partido: 'FREVS', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 25525, porcentaje: '11,91%' },
+  { nombre: 'Cristian Tapia Ramos', partido: 'PPD', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 18154, porcentaje: '10,53%' },
+  { nombre: 'Juan Santana Castillo', partido: 'PS', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 19335, porcentaje: '11,22%' },
+  { nombre: 'Paula Olmos Contreras', partido: 'PDG', bloque: 'Independiente', region: 'Atacama', distrito: 4, votos: 9975, porcentaje: '5,79%' },
+  { nombre: 'Ignacio Clement-Lund', partido: 'Republicano', bloque: 'Oficialismo', region: 'Atacama', distrito: 4, votos: 8375, porcentaje: '4,86%' },
+  // D5 - Coquimbo
+  { nombre: 'Carolina Tello Rojas', partido: 'FA', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 15047, porcentaje: '3,37%' },
+  { nombre: 'Daniel Manouchehri Moghadam', partido: 'PS', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 94501, porcentaje: '21,16%' },
+  { nombre: 'Nathalie Castillo Rojas', partido: 'PC', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 19290, porcentaje: '4,32%' },
+  { nombre: 'Bernardo Salinas Maya', partido: 'PC', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 3802, porcentaje: '0,85%' },
+  { nombre: 'Eileen Urquieta Rojas', partido: 'PDG', bloque: 'Independiente', region: 'Coquimbo', distrito: 5, votos: 15660, porcentaje: '3,51%' },
+  { nombre: 'Marco Sulantay Olivares', partido: 'UDI', bloque: 'Oficialismo', region: 'Coquimbo', distrito: 5, votos: 22781, porcentaje: '5,10%' },
+  { nombre: 'Erich Grohs Marín', partido: 'PNL', bloque: 'Oficialismo', region: 'Coquimbo', distrito: 5, votos: 13502, porcentaje: '3,02%' },
+  // D6 - Valparaíso (interior)
+  { nombre: 'Nelson Venegas Salazar', partido: 'PS', bloque: 'Oposición', region: 'Valparaíso', distrito: 6, votos: 38426, porcentaje: '6,49%' },
+  { nombre: 'Sofía González Cortés', partido: 'PC', bloque: 'Oposición', region: 'Valparaíso', distrito: 6, votos: 33227, porcentaje: '5,65%' },
+  { nombre: 'María Francisca Bello Campos', partido: 'FA', bloque: 'Oposición', region: 'Valparaíso', distrito: 6, votos: 30426, porcentaje: '5,17%' },
+  { nombre: 'Cristian Mella Andau', partido: 'PDC', bloque: 'Oposición', region: 'Valparaíso', distrito: 6, votos: 30782, porcentaje: '5,23%' },
+  { nombre: 'Javier Olivares Avendaño', partido: 'PDG', bloque: 'Independiente', region: 'Valparaíso', distrito: 6, votos: 31971, porcentaje: '5,44%' },
+  { nombre: 'Luis Pardo Sainz', partido: 'RN', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 6, votos: 43341, porcentaje: '7,37%' },
+  { nombre: 'Chiara Barchiesi', partido: 'Republicano', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 6, votos: 62737, porcentaje: '10,67%' },
+  { nombre: 'Benjamín Lorca Inzunza', partido: 'Republicano', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 6, votos: 19639, porcentaje: '3,34%' },
+  // D7 - Valparaíso (costa)
+  { nombre: 'Jorge Brito Hasbun', partido: 'FA', bloque: 'Oposición', region: 'Valparaíso', distrito: 7, votos: 34122, porcentaje: '6,09%' },
+  { nombre: 'Jaime Bassa Mercado', partido: 'FA', bloque: 'Oposición', region: 'Valparaíso', distrito: 7, votos: 40308, porcentaje: '7,20%' },
+  { nombre: 'Luis Cuello Peña', partido: 'PC', bloque: 'Oposición', region: 'Valparaíso', distrito: 7, votos: 37474, porcentaje: '6,69%' },
+  { nombre: 'Juan Marcelo Valenzuela Henríquez', partido: 'PDG', bloque: 'Independiente', region: 'Valparaíso', distrito: 7, votos: 26166, porcentaje: '4,67%' },
+  { nombre: 'Andrés Celis Montt', partido: 'RN', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 7, votos: 27649, porcentaje: '4,94%' },
+  { nombre: 'Hotuiti Teao Drago', partido: 'UDI', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 7, votos: 40050, porcentaje: '8,22%' },
+  { nombre: 'Luis Sánchez Ossa', partido: 'Republicano', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 7, votos: 37854, porcentaje: '6,76%' },
+  { nombre: 'Sebastián Zamora Soto', partido: 'Republicano', bloque: 'Oficialismo', region: 'Valparaíso', distrito: 7, votos: 25755, porcentaje: '4,60%' },
+  // D8 - Metropolitana (oeste)
+  { nombre: 'Gustavo Gatica Villarroel', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 8, votos: 94444, porcentaje: '12,31%' },
+  { nombre: 'Marcos Barraza Gómez', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 8, votos: 26235, porcentaje: '3,42%' },
+  { nombre: 'Tatiana Urrutia Herrera', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 8, votos: 33124, porcentaje: '4,32%' },
+  { nombre: 'Cristián Contreras Radovic', partido: 'PDG', bloque: 'Independiente', region: 'Metropolitana', distrito: 8, votos: 52565, porcentaje: '6,85%' },
+  { nombre: 'Mario Olavarría Rodríguez', partido: 'UDI', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 8, votos: 23873, porcentaje: '3,11%' },
+  { nombre: 'Agustín Romero Leiva', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 8, votos: 53491, porcentaje: '6,97%' },
+  { nombre: 'Enrique Bassaletti Riess', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 8, votos: 47372, porcentaje: '6,18%' },
+  { nombre: 'Pier Karlezi Hazleby', partido: 'PNL', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 8, votos: 22867, porcentaje: '2,98%' },
+  // D9 - Metropolitana (norte)
+  { nombre: 'Boris Barrera Moreno', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 9, votos: 38547, porcentaje: '7,55%' },
+  { nombre: 'César Valenzuela Maass', partido: 'PS', bloque: 'Oposición', region: 'Metropolitana', distrito: 9, votos: 23652, porcentaje: '4,63%' },
+  { nombre: 'Carlos Cuadrado Prats', partido: 'PPD', bloque: 'Oposición', region: 'Metropolitana', distrito: 9, votos: 45282, porcentaje: '8,87%' },
+  { nombre: 'Tamara Ramírez Ramírez', partido: 'PDG', bloque: 'Independiente', region: 'Metropolitana', distrito: 9, votos: 23790, porcentaje: '4,66%' },
+  { nombre: 'Guillermo Ramírez Diez', partido: 'UDI', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 9, votos: 19093, porcentaje: '3,74%' },
+  { nombre: 'José Carlos Meza Pereira', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 9, votos: 33721, porcentaje: '6,61%' },
+  { nombre: 'Javiera Rodríguez Pascual', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 9, votos: 25145, porcentaje: '4,93%' },
+  // D10 - Metropolitana (centro)
+  { nombre: 'Gonzalo Winter Etcheberry', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 10, votos: 94085, porcentaje: '14,53%' },
+  { nombre: 'Emilia Schneider Videla', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 10, votos: 31212, porcentaje: '4,82%' },
+  { nombre: 'Lorena Fries Monleón', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 10, votos: 5707, porcentaje: '0,88%' },
+  { nombre: 'Irací Hassler Jacob', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 10, votos: 46678, porcentaje: '7,21%' },
+  { nombre: 'Jorge Alessandri Vergara', partido: 'UDI', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 10, votos: 56612, porcentaje: '8,74%' },
+  { nombre: 'Francisco Orrego Gutiérrez', partido: 'RN', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 10, votos: 60336, porcentaje: '9,32%' },
+  { nombre: 'Hans Marowski Cuevas', partido: 'PNL', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 10, votos: 27976, porcentaje: '4,32%' },
+  { nombre: 'José Antonio Kast Adriasola', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 10, votos: 56740, porcentaje: '8,76%' },
+  // D11 - Metropolitana (oriente)
+  { nombre: 'Constanza Schönhaut Soto', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 11, votos: 8730, porcentaje: '4,35%' },
+  { nombre: 'Diego Schalper Sepúlveda', partido: 'RN', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 11, votos: 32007, porcentaje: '15,95%' },
+  { nombre: 'Claudia Mora Vega', partido: 'RN', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 11, votos: 2777, porcentaje: '1,38%' },
+  { nombre: 'Constanza Hube Portus', partido: 'UDI', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 11, votos: 26710, porcentaje: '13,31%' },
+  { nombre: 'Cristián Araya', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 11, votos: 16976, porcentaje: '8,46%' },
+  { nombre: 'Catalina del Real', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 11, votos: 25417, porcentaje: '12,66%' },
+  // D12 - Metropolitana (sur)
+  { nombre: 'Daniela Serrano Salazar', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 12, votos: 44742, porcentaje: '7,23%' },
+  { nombre: 'Ana María Gazmuri', partido: 'AH', bloque: 'Oposición', region: 'Metropolitana', distrito: 12, votos: 57944, porcentaje: '9,37%' },
+  { nombre: 'Pamela Jiles Moreno', partido: 'PDG', bloque: 'Independiente', region: 'Metropolitana', distrito: 12, votos: 94478, porcentaje: '15,27%' },
+  { nombre: 'Zandra Parisi Fernández', partido: 'PDG', bloque: 'Independiente', region: 'Metropolitana', distrito: 12, votos: 15249, porcentaje: '2,46%' },
+  { nombre: 'Ximena Ossandón Rodríguez', partido: 'RN', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 12, votos: 48711, porcentaje: '7,87%' },
+  { nombre: 'Álvaro Carter Fernández', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 12, votos: 69157, porcentaje: '11,18%' },
+  { nombre: 'Macarena Santelices Cañas', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 12, votos: 23062, porcentaje: '3,73%' },
+  // D13 - Metropolitana (sur poniente)
+  { nombre: 'Lorena Pizarro Soto', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 13, votos: 30352, porcentaje: '8,17%' },
+  { nombre: 'Gael Yeomans Araya', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 13, votos: 46765, porcentaje: '12,55%' },
+  { nombre: 'Eduardo Durán Salinas', partido: 'RN', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 13, votos: 17558, porcentaje: '4,73%' },
+  { nombre: 'Felipe Ross Correa', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 13, votos: 36369, porcentaje: '9,79%' },
+  { nombre: 'Valentina Becerra Peña', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 13, votos: 22199, porcentaje: '5,98%' },
+  // D14 - Metropolitana (sur rural)
+  { nombre: 'Raúl Leiva Carvajal', partido: 'PS', bloque: 'Oposición', region: 'Metropolitana', distrito: 14, votos: 41375, porcentaje: '7,18%' },
+  { nombre: 'Marisela Santibáñez Novoa', partido: 'PC', bloque: 'Oposición', region: 'Metropolitana', distrito: 14, votos: 46760, porcentaje: '8,11%' },
+  { nombre: 'Ignacio Achurra Díaz', partido: 'FA', bloque: 'Oposición', region: 'Metropolitana', distrito: 14, votos: 49264, porcentaje: '8,55%' },
+  { nombre: 'Jaime Coloma Álamos', partido: 'UDI', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 14, votos: 46157, porcentaje: '8,01%' },
+  { nombre: 'Juan Irarrázaval Rossel', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 14, votos: 42827, porcentaje: '7,43%' },
+  { nombre: 'Diego Vergara Rodríguez', partido: 'Republicano', bloque: 'Oficialismo', region: 'Metropolitana', distrito: 14, votos: 45503, porcentaje: '7,90%' },
+  // D15 - O'Higgins (norte)
+  { nombre: 'Raúl Soto Mardones', partido: 'PPD', bloque: 'Oposición', region: "O'Higgins", distrito: 15, votos: 64377, porcentaje: '18,74%' },
+  { nombre: 'Fernando Zamorano Peralta', partido: 'PPD', bloque: 'Oposición', region: "O'Higgins", distrito: 15, votos: 4599, porcentaje: '1,34%' },
+  { nombre: 'Valentina Cáceres Monsalvez', partido: 'FA', bloque: 'Oposición', region: "O'Higgins", distrito: 15, votos: 25746, porcentaje: '7,50%' },
+  { nombre: 'Natalia Romero Talguía', partido: 'UDI', bloque: 'Oficialismo', region: "O'Higgins", distrito: 15, votos: 34258, porcentaje: '9,98%' },
+  { nombre: 'Fernando Ugarte Tejeda', partido: 'Republicano', bloque: 'Oficialismo', region: "O'Higgins", distrito: 15, votos: 28533, porcentaje: '8,31%' },
+  // D16 - O'Higgins (sur)
+  { nombre: 'Félix Bugueño Sotelo', partido: 'FA', bloque: 'Oposición', region: "O'Higgins", distrito: 16, votos: 20172, porcentaje: '7,88%' },
+  { nombre: 'Carolina Cucumides Calderón', partido: 'PS', bloque: 'Oposición', region: "O'Higgins", distrito: 16, votos: 22655, porcentaje: '8,85%' },
+  { nombre: 'Ricardo Neumann Bertin', partido: 'UDI', bloque: 'Oficialismo', region: "O'Higgins", distrito: 16, votos: 31245, porcentaje: '12,20%' },
+  { nombre: 'Sebastián Cristoffanini', partido: 'Republicano', bloque: 'Oficialismo', region: "O'Higgins", distrito: 16, votos: 17347, porcentaje: '6,77%' },
+  // D17 - Maule (norte)
+  { nombre: 'Roberto Celedón Fernández', partido: 'FA', bloque: 'Oposición', region: 'Maule', distrito: 17, votos: 43878, porcentaje: '9,65%' },
+  { nombre: 'Priscilla Castillo Gerli', partido: 'PDC', bloque: 'Oposición', region: 'Maule', distrito: 17, votos: 46849, porcentaje: '10,30%' },
+  { nombre: 'Javier Muñoz Riquelme', partido: 'PDC', bloque: 'Oposición', region: 'Maule', distrito: 17, votos: 34294, porcentaje: '7,54%' },
+  { nombre: 'Guillermo Valdés Carmona', partido: 'PDG', bloque: 'Independiente', region: 'Maule', distrito: 17, votos: 12315, porcentaje: '2,71%' },
+  { nombre: 'Jorge Guzmán Zepeda', partido: 'Evópoli', bloque: 'Oficialismo', region: 'Maule', distrito: 17, votos: 36407, porcentaje: '8,00%' },
+  { nombre: 'Benjamín Moreno Bascur', partido: 'Republicano', bloque: 'Oficialismo', region: 'Maule', distrito: 17, votos: 33754, porcentaje: '7,42%' },
+  { nombre: 'Germán Verdugo Soto', partido: 'PNL', bloque: 'Oficialismo', region: 'Maule', distrito: 17, votos: 20956, porcentaje: '4,61%' },
+  // D18 - Maule (sur)
+  { nombre: 'Consuelo Veloso Ávila', partido: 'FA', bloque: 'Oposición', region: 'Maule', distrito: 18, votos: 35583, porcentaje: '14,91%' },
+  { nombre: 'Rodrigo Ramírez Parra', partido: 'RN', bloque: 'Oficialismo', region: 'Maule', distrito: 18, votos: 19175, porcentaje: '8,03%' },
+  { nombre: 'Daniel Bustos Leal', partido: 'Republicano', bloque: 'Oficialismo', region: 'Maule', distrito: 18, votos: 13475, porcentaje: '5,65%' },
+  { nombre: 'Cristián Menchaca Munita', partido: 'Republicano', bloque: 'Oficialismo', region: 'Maule', distrito: 18, votos: 32102, porcentaje: '13,45%' },
+  // D19 - Ñuble
+  { nombre: 'Felipe Camaño Cárdenas', partido: 'PDC', bloque: 'Oposición', region: 'Ñuble', distrito: 19, votos: 38559, porcentaje: '11,69%' },
+  { nombre: 'Francisco Crisóstomo Llanos', partido: 'PS', bloque: 'Oposición', region: 'Ñuble', distrito: 19, votos: 15651, porcentaje: '4,75%' },
+  { nombre: 'Cristóbal Martínez', partido: 'UDI', bloque: 'Oficialismo', region: 'Ñuble', distrito: 19, votos: 24506, porcentaje: '7,43%' },
+  { nombre: 'Carlos Chandía Alarcón', partido: 'RN', bloque: 'Oficialismo', region: 'Ñuble', distrito: 19, votos: 22818, porcentaje: '6,92%' },
+  { nombre: 'Sara Concha Smith', partido: 'PSC', bloque: 'Oficialismo', region: 'Ñuble', distrito: 19, votos: 18556, porcentaje: '5,63%' },
+  // D20 - Biobío (costa)
+  { nombre: 'Álvaro Ortiz Vera', partido: 'PDC', bloque: 'Oposición', region: 'Biobío', distrito: 20, votos: 41837, porcentaje: '7,13%' },
+  { nombre: 'Antonio Rivas Villalobos', partido: 'PS', bloque: 'Oposición', region: 'Biobío', distrito: 20, votos: 27175, porcentaje: '4,63%' },
+  { nombre: 'Patricio Briones Möller', partido: 'PDG', bloque: 'Independiente', region: 'Biobío', distrito: 20, votos: 18160, porcentaje: '3,09%' },
+  { nombre: 'Sergio Bobadilla Muñoz', partido: 'UDI', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 19213, porcentaje: '3,27%' },
+  { nombre: 'Marlene Pérez Cartes', partido: 'UDI', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 26600, porcentaje: '4,53%' },
+  { nombre: 'Francesca Muñoz González', partido: 'PSC', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 53997, porcentaje: '9,20%' },
+  { nombre: 'Roberto Arroyo González', partido: 'PSC', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 7892, porcentaje: '1,34%' },
+  { nombre: 'Paz Charpentier Rajcevich', partido: 'Republicano', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 44943, porcentaje: '7,66%' },
+  // D21 - Biobío (interior)
+  { nombre: 'Patricio Pinilla Valencia', partido: 'PDC', bloque: 'Oposición', region: 'Biobío', distrito: 21, votos: 20035, porcentaje: '5,13%' },
+  { nombre: 'Lilian Betancurt Delgado', partido: 'PDG', bloque: 'Independiente', region: 'Biobío', distrito: 21, votos: 14469, porcentaje: '3,71%' },
+  { nombre: 'Joanna Pérez Olea', partido: 'RN', bloque: 'Oficialismo', region: 'Biobío', distrito: 21, votos: 32824, porcentaje: '8,41%' },
+  { nombre: 'Flor Weisse Novoa', partido: 'UDI', bloque: 'Oficialismo', region: 'Biobío', distrito: 21, votos: 36115, porcentaje: '9,25%' },
+  { nombre: 'Cristóbal Urruticoechea Ríos', partido: 'PNL', bloque: 'Oficialismo', region: 'Biobío', distrito: 21, votos: 27947, porcentaje: '7,16%' },
+  // D22 - La Araucanía (norte)
+  { nombre: 'Andrea Parra Sauterel', partido: 'PPD', bloque: 'Oposición', region: 'La Araucanía', distrito: 22, votos: 14430, porcentaje: '7,42%' },
+  { nombre: 'Juan Carlos Beltrán Silva', partido: 'RN', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 22, votos: 25762, porcentaje: '13,25%' },
+  { nombre: 'Eduardo Cretton Rebolledo', partido: 'UDI', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 22, votos: 29658, porcentaje: '15,25%' },
+  { nombre: 'Gloria Naveillán Arriagada', partido: 'PNL', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 22, votos: 16389, porcentaje: '8,43%' },
+  // D23 - La Araucanía (sur)
+  { nombre: 'José Montalva Feuerhake', partido: 'PPD', bloque: 'Oposición', region: 'La Araucanía', distrito: 23, votos: 33884, porcentaje: '7,91%' },
+  { nombre: 'Coca Ñanco Vásquez', partido: 'FA', bloque: 'Oposición', region: 'La Araucanía', distrito: 23, votos: 28418, porcentaje: '6,63%' },
+  { nombre: 'Flor Contreras Vivallo', partido: 'PDG', bloque: 'Independiente', region: 'La Araucanía', distrito: 23, votos: 10759, porcentaje: '2,51%' },
+  { nombre: 'Tomás Kast Sommerhoff', partido: 'Evópoli', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 23, votos: 34870, porcentaje: '8,14%' },
+  { nombre: 'René Manuel García García', partido: 'RN', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 23, votos: 18105, porcentaje: '4,23%' },
+  { nombre: 'Stephan Schubert Rubio', partido: 'Republicano', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 23, votos: 40705, porcentaje: '9,50%' },
+  { nombre: 'Cristián Neira Martínez', partido: 'Republicano', bloque: 'Oficialismo', region: 'La Araucanía', distrito: 23, votos: 14010, porcentaje: '3,27%' },
+  // D24 - Los Ríos
+  { nombre: 'Marcos Ilabaca Cerda', partido: 'PS', bloque: 'Oposición', region: 'Los Ríos', distrito: 24, votos: 33641, porcentaje: '13,00%' },
+  { nombre: 'Matías Fernández Hartwig', partido: 'FA', bloque: 'Oposición', region: 'Los Ríos', distrito: 24, votos: 26179, porcentaje: '10,12%' },
+  { nombre: 'Omar Sabat Fernández', partido: 'UDI', bloque: 'Oficialismo', region: 'Los Ríos', distrito: 24, votos: 26518, porcentaje: '10,25%' },
+  { nombre: 'Daniel Valenzuela Vásquez', partido: 'RN', bloque: 'Oficialismo', region: 'Los Ríos', distrito: 24, votos: 15031, porcentaje: '5,81%' },
+  { nombre: 'Leandro Kunstmann Rojas', partido: 'Republicano', bloque: 'Oficialismo', region: 'Los Ríos', distrito: 24, votos: 23371, porcentaje: '9,03%' },
+  // D25 - Los Lagos (norte)
+  { nombre: 'Héctor Barría Angulo', partido: 'PDC', bloque: 'Oposición', region: 'Los Lagos', distrito: 25, votos: 32211, porcentaje: '13,74%' },
+  { nombre: 'Emilia Nuyado Ancapichún', partido: 'PS', bloque: 'Oposición', region: 'Los Lagos', distrito: 25, votos: 30571, porcentaje: '13,04%' },
+  { nombre: 'Daniel Lilayu Winnimann', partido: 'UDI', bloque: 'Oficialismo', region: 'Los Lagos', distrito: 25, votos: 24795, porcentaje: '10,58%' },
+  { nombre: 'Paulina Muñoz Alarcón', partido: 'PNL', bloque: 'Oficialismo', region: 'Los Lagos', distrito: 25, votos: 20229, porcentaje: '8,63%' },
+  // D26 - Los Lagos (sur)
+  { nombre: 'Héctor Ulloa Aguilera', partido: 'PPD', bloque: 'Oposición', region: 'Los Lagos', distrito: 26, votos: 20441, porcentaje: '6,88%' },
+  { nombre: 'Alejandro Bernales Mardones', partido: 'Liberal', bloque: 'Oposición', region: 'Los Lagos', distrito: 26, votos: 35435, porcentaje: '11,93%' },
+  { nombre: 'Álex Nahuelquín', partido: 'PDG', bloque: 'Independiente', region: 'Los Lagos', distrito: 26, votos: 30324, porcentaje: '10,21%' },
+  { nombre: 'Mauro González Villarroel', partido: 'RN', bloque: 'Oficialismo', region: 'Los Lagos', distrito: 26, votos: 35202, porcentaje: '11,85%' },
+  { nombre: 'Claudia Reyes Larenas', partido: 'Republicano', bloque: 'Oficialismo', region: 'Los Lagos', distrito: 26, votos: 30865, porcentaje: '10,39%' },
+  // D27 - Aysén
+  { nombre: 'René Alinco Bustos', partido: 'FREVS', bloque: 'Oposición', region: 'Aysén', distrito: 27, votos: 8889, porcentaje: '14,26%' },
+  { nombre: 'Andrea Macías Palma', partido: 'PS', bloque: 'Oposición', region: 'Aysén', distrito: 27, votos: 9625, porcentaje: '15,44%' },
+  { nombre: 'Alejandra Valdebenito Rodríguez', partido: 'UDI', bloque: 'Oficialismo', region: 'Aysén', distrito: 27, votos: 6451, porcentaje: '10,35%' },
+  // D28 - Magallanes
+  { nombre: 'Javiera Morales Ortiz', partido: 'FA', bloque: 'Oposición', region: 'Magallanes', distrito: 28, votos: 9359, porcentaje: '9,30%' },
+  { nombre: 'Alejandro Riquelme Herrera', partido: 'Republicano', bloque: 'Oficialismo', region: 'Magallanes', distrito: 28, votos: 12685, porcentaje: '12,61%' },
+  { nombre: 'Carlos Bianchi Chelech', partido: 'Independiente', bloque: 'Independiente', region: 'Magallanes', distrito: 28, votos: 24954, porcentaje: '24,81%' },
+]
