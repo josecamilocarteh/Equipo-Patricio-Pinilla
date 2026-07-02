@@ -9,7 +9,8 @@
 //
 // FLUJO:
 // 1. Pide la lista de diputados del período actual (retornarDiputadosPeriodoActual)
-//    — UNA sola llamada, para saber nombre/apellido/distrito de los 155.
+//    — UNA sola llamada, para saber nombre/apellido/partido vigente de los 155.
+//    (Esta respuesta NO trae distrito, así que no se puede mostrar por ahora.)
 // 2. Pide la lista completa de mociones del año (retornarMocionesXAnno).
 // 3. Por cada moción que se originó en la Cámara (no Senado), pide el detalle
 //    (retornarProyectoLey) para ver sus autores.
@@ -72,8 +73,41 @@ async function fetchXML(url) {
   return await res.text();
 }
 
+// De la lista de <Militancia> de un diputado, determina cuál es la vigente
+// ahora mismo: la que tiene la FechaInicio más reciente que ya pasó.
+// (Confirmado con datos reales: NO existe un campo <Distrito> en esta
+// respuesta, así que no se puede sacar distrito de aquí. Sí existen
+// <Militancias><Militancia><FechaInicio/><FechaTermino/><Partido/></Militancia></Militancias>.)
+function obtenerPartidoVigente(dipXml) {
+  const militanciasXml = extraerTag(dipXml, "Militancias");
+  if (!militanciasXml) return null;
+  const militancias = extraerTags(militanciasXml, "Militancia");
+
+  const ahora = new Date();
+  let mejor = null;
+
+  militancias.forEach((m) => {
+    const inicioStr = extraerTag(m, "FechaInicio");
+    if (!inicioStr) return;
+    const inicio = new Date(inicioStr);
+    if (isNaN(inicio) || inicio > ahora) return; // aún no empieza, no cuenta
+    if (!mejor || inicio > mejor.inicio) {
+      const partidoXml = extraerTag(m, "Partido");
+      if (!partidoXml) return;
+      mejor = {
+        inicio,
+        id: extraerTag(partidoXml, "Id") || "IND",
+        nombre: extraerTag(partidoXml, "Nombre") || "Independientes",
+        alias: extraerTag(partidoXml, "Alias") || "IND",
+      };
+    }
+  });
+
+  return mejor ? { id: mejor.id, nombre: mejor.nombre, alias: mejor.alias } : null;
+}
+
 // Trae los diputados que están en ejercicio ahora mismo (155), con su
-// nombre, apellidos y distrito. Una sola llamada.
+// nombre, apellidos y partido vigente. Una sola llamada.
 async function obtenerDiputadosActuales() {
   const xml = await fetchXML(`${DIP_BASE}/retornarDiputadosPeriodoActual`);
   const bloques = extraerTags(xml, "DiputadoPeriodo");
@@ -83,14 +117,13 @@ async function obtenerDiputadosActuales() {
 
   bloques.forEach((bloque) => {
     const dipXml = extraerTag(bloque, "Diputado");
-    const distritoXml = extraerTag(bloque, "Distrito");
     if (!dipXml) return;
 
     const id = extraerTag(dipXml, "Id");
     const nombrePila = extraerTag(dipXml, "Nombre");
     const apellidoPaterno = extraerTag(dipXml, "ApellidoPaterno");
     const apellidoMaterno = extraerTag(dipXml, "ApellidoMaterno");
-    const distrito = distritoXml ? parseInt(extraerTag(distritoXml, "Numero"), 10) || null : null;
+    const partido = obtenerPartidoVigente(dipXml);
 
     if (!id || !apellidoPaterno || !nombrePila) return;
 
@@ -98,7 +131,7 @@ async function obtenerDiputadosActuales() {
       .filter(Boolean)
       .join(" ");
 
-    const info = { id, nombre: nombreCompleto, apellidoPaterno, nombrePila, distrito };
+    const info = { id, nombre: nombreCompleto, apellidoPaterno, nombrePila, partido };
     lista.push(info);
 
     const clave = claveNombre(apellidoPaterno, nombrePila);
@@ -203,9 +236,10 @@ export default async function handler(req, res) {
       .map((d) => ({
         id: d.id,
         nombre: d.nombre,
-        distrito: d.distrito,
+        partido: d.partido, // { id, nombre, alias } o null
         mociones: conteoGeneral[d.id] || 0,
-        esPinilla: d.distrito === 21 && normalizar(d.apellidoPaterno) === "pinilla",
+        esPinilla:
+          normalizar(d.apellidoPaterno) === "pinilla" && normalizar(d.nombrePila) === "patricio",
       }))
       .sort((a, b) => b.mociones - a.mociones);
 
