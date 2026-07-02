@@ -42,19 +42,19 @@ export const diputados = [
   { nombre: 'Jaime Araya Guerrero', partido: 'PPD', bloque: 'Oposición', region: 'Antofagasta', distrito: 3, votos: 13604, porcentaje: '4,27%' },
   { nombre: 'Marcela Hernando Pérez', partido: 'Liberal', bloque: 'Oposición', region: 'Antofagasta', distrito: 3, votos: 11944, porcentaje: '3,74%' },
   { nombre: 'Fabián Ossandón Briceño', partido: 'PDG', bloque: 'Independiente', region: 'Antofagasta', distrito: 3, votos: 33161, porcentaje: '10,40%' },
-  { nombre: 'Carlo Arquero Pizarro', partido: 'Republicano', bloque: 'Oficialismo', region: 'Antofagasta', distrito: 3, votos: 12464, porcentaje: '3,91%' },
+  { nombre: 'Carlo Arqueros Pizarro', partido: 'Republicano', bloque: 'Oficialismo', region: 'Antofagasta', distrito: 3, votos: 12464, porcentaje: '3,91%' },
   // D4 - Atacama
   { nombre: 'Jaime Mulet Martínez', partido: 'FREVS', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 25525, porcentaje: '11,91%' },
   { nombre: 'Cristian Tapia Ramos', partido: 'PPD', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 18154, porcentaje: '10,53%' },
   { nombre: 'Juan Santana Castillo', partido: 'PS', bloque: 'Oposición', region: 'Atacama', distrito: 4, votos: 19335, porcentaje: '11,22%' },
   { nombre: 'Paula Olmos Contreras', partido: 'PDG', bloque: 'Independiente', region: 'Atacama', distrito: 4, votos: 9975, porcentaje: '5,79%' },
-  { nombre: 'Ignacio Clement-Lund', partido: 'Republicano', bloque: 'Oficialismo', region: 'Atacama', distrito: 4, votos: 8375, porcentaje: '4,86%' },
+  { nombre: 'Ignacio Urcullú Clèment-Lund', partido: 'Republicano', bloque: 'Oficialismo', region: 'Atacama', distrito: 4, votos: 8375, porcentaje: '4,86%' },
   // D5 - Coquimbo
   { nombre: 'Carolina Tello Rojas', partido: 'FA', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 15047, porcentaje: '3,37%' },
   { nombre: 'Daniel Manouchehri Moghadam', partido: 'PS', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 94501, porcentaje: '21,16%' },
   { nombre: 'Nathalie Castillo Rojas', partido: 'PC', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 19290, porcentaje: '4,32%' },
   { nombre: 'Bernardo Salinas Maya', partido: 'PC', bloque: 'Oposición', region: 'Coquimbo', distrito: 5, votos: 3802, porcentaje: '0,85%' },
-  { nombre: 'Eileen Urquieta Rojas', partido: 'PDG', bloque: 'Independiente', region: 'Coquimbo', distrito: 5, votos: 15660, porcentaje: '3,51%' },
+  { nombre: 'Eileen Urqueta Rojas', partido: 'PDG', bloque: 'Independiente', region: 'Coquimbo', distrito: 5, votos: 15660, porcentaje: '3,51%' },
   { nombre: 'Marco Sulantay Olivares', partido: 'UDI', bloque: 'Oficialismo', region: 'Coquimbo', distrito: 5, votos: 22781, porcentaje: '5,10%' },
   { nombre: 'Erich Grohs Marín', partido: 'PNL', bloque: 'Oficialismo', region: 'Coquimbo', distrito: 5, votos: 13502, porcentaje: '3,02%' },
   // D6 - Valparaíso (interior)
@@ -161,7 +161,7 @@ export const diputados = [
   { nombre: 'Sara Concha Smith', partido: 'PSC', bloque: 'Oficialismo', region: 'Ñuble', distrito: 19, votos: 18556, porcentaje: '5,63%' },
   // D20 - Biobío (costa)
   { nombre: 'Álvaro Ortiz Vera', partido: 'PDC', bloque: 'Oposición', region: 'Biobío', distrito: 20, votos: 41837, porcentaje: '7,13%' },
-  { nombre: 'Antonio Rivas Villalobos', partido: 'PS', bloque: 'Oposición', region: 'Biobío', distrito: 20, votos: 27175, porcentaje: '4,63%' },
+  { nombre: 'José Antonio Rivas Villalobos', partido: 'PS', bloque: 'Oposición', region: 'Biobío', distrito: 20, votos: 27175, porcentaje: '4,63%' },
   { nombre: 'Patricio Briones Möller', partido: 'PDG', bloque: 'Independiente', region: 'Biobío', distrito: 20, votos: 18160, porcentaje: '3,09%' },
   { nombre: 'Sergio Bobadilla Muñoz', partido: 'UDI', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 19213, porcentaje: '3,27%' },
   { nombre: 'Marlene Pérez Cartes', partido: 'UDI', bloque: 'Oficialismo', region: 'Biobío', distrito: 20, votos: 26600, porcentaje: '4,53%' },
