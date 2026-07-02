@@ -84,15 +84,23 @@ async function fetchXML(url) {
 // del proyecto.
 function buscarEnDatosEstaticos(apellidoPaterno, nombrePila) {
   const apN = normalizar(apellidoPaterno);
-  // El dataset estático usa a veces el nombre "de uso común" (ej. "Marco" en
-  // vez de "Marco Antonio", "Luis" en vez de "Luis Alberto"), así que solo
-  // exigimos que coincida el PRIMER nombre de pila, no el nombre completo.
-  const primerNombre = normalizar((nombrePila || "").split(/\s+/)[0]);
-  if (!apN || !primerNombre) return null;
+  if (!apN) return null;
+  // El dataset estático a veces usa el nombre "de uso común" en vez del legal
+  // completo (ej. "Marco" en vez de "Marco Antonio"), y a veces usa el
+  // SEGUNDO nombre en vez del primero (ej. "Antonio" en vez de "José
+  // Antonio"). Por eso probamos con cada palabra del nombre de pila, no
+  // solo la primera.
+  const tokens = (nombrePila || "")
+    .split(/\s+/)
+    .map(normalizar)
+    .filter(Boolean);
+  if (!tokens.length) return null;
+
   return (
     DIPUTADOS_ESTATICOS.find((d) => {
       const nombreN = normalizar(d.nombre);
-      return nombreN.includes(apN) && nombreN.includes(primerNombre);
+      if (!nombreN.includes(apN)) return false;
+      return tokens.some((t) => nombreN.includes(t));
     }) || null
   );
 }
