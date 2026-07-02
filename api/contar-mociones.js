@@ -1,23 +1,34 @@
 // /api/contar-mociones.js
 //
-// Cuenta cuántas mociones presentó cada diputado del Distrito 21 en el año dado,
-// consultando la API de Datos Abiertos de la Cámara.
+// Cuenta cuántas mociones presentó cada diputado en el año dado, consultando
+// la API de Datos Abiertos de la Cámara. Calcula DOS rankings en la misma
+// pasada (mismo costo de llamadas HTTP que antes):
+//
+//   1. ranking         → los 5 diputados del Distrito 21 (igual que siempre)
+//   2. rankingGeneral   → los 155 diputados en ejercicio actualmente
 //
 // FLUJO:
-// 1. Pide la lista completa de mociones del año (retornarMocionesXAnno).
-// 2. Por cada moción que se originó en la Cámara (no Senado), pide el detalle
+// 1. Pide la lista de diputados del período actual (retornarDiputadosPeriodoActual)
+//    — UNA sola llamada, para saber nombre/apellido/distrito de los 155.
+// 2. Pide la lista completa de mociones del año (retornarMocionesXAnno).
+// 3. Por cada moción que se originó en la Cámara (no Senado), pide el detalle
 //    (retornarProyectoLey) para ver sus autores.
-// 3. Cuenta cuántas veces aparece cada uno de los 5 diputados del distrito.
+// 4. Por cada autor, lo cruza contra la lista de diputados del Distrito 21 Y
+//    contra la lista completa de 155, sumando en ambos conteos a la vez.
 //
-// OJO: esto hace muchas llamadas (una por cada moción de la Cámara en el año).
-// Por eso NO se llama directo desde el navegador del visitante — la usa
-// /api/cron-mociones.js una vez al día, y el resultado se guarda en un Gist.
+// OJO: esto hace muchas llamadas (una por cada moción de la Cámara en el año,
+// más una extra para la lista de diputados). Por eso NO se llama directo desde
+// el navegador del visitante — la usa /api/cron-mociones.js una vez al día,
+// y el resultado se guarda en un Gist.
 
 const BASE = "https://opendata.camara.cl/camaradiputados/WServices/WSLegislativo.asmx";
+const DIP_BASE = "https://opendata.camara.cl/camaradiputados/WServices/WSDiputado.asmx";
 
 // Diputados del Distrito 21 a rastrear. Cada uno con su apellido paterno
 // (tal como viene en el campo <ApellidoPaterno> de la API) y nombre, para
 // cruzar de forma robusta evitando falsos positivos por apellidos comunes.
+// (Se mantiene esta lista fija —igual que siempre— para no arriesgar el
+// panel del Distrito 21, que ya funciona bien.)
 const DIPUTADOS_DISTRITO_21 = [
   { nombre: "Patricio Pinilla", apellidoPaterno: "Pinilla", nombrePila: "Patricio" },
   { nombre: "Joanna Pérez", apellidoPaterno: "Pérez", nombrePila: "Joanna" },
@@ -32,6 +43,10 @@ function normalizar(str) {
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, ""); // quita tildes
+}
+
+function claveNombre(apellidoPaterno, nombrePila) {
+  return normalizar(apellidoPaterno) + "|" + normalizar(nombrePila);
 }
 
 // Parser XML simple por regex (sin librerías externas, igual estilo que
@@ -57,24 +72,71 @@ async function fetchXML(url) {
   return await res.text();
 }
 
+// Trae los diputados que están en ejercicio ahora mismo (155), con su
+// nombre, apellidos y distrito. Una sola llamada.
+async function obtenerDiputadosActuales() {
+  const xml = await fetchXML(`${DIP_BASE}/retornarDiputadosPeriodoActual`);
+  const bloques = extraerTags(xml, "DiputadoPeriodo");
+
+  const porClave = new Map(); // "apellido|nombre" normalizado -> info del diputado
+  const lista = [];
+
+  bloques.forEach((bloque) => {
+    const dipXml = extraerTag(bloque, "Diputado");
+    const distritoXml = extraerTag(bloque, "Distrito");
+    if (!dipXml) return;
+
+    const id = extraerTag(dipXml, "Id");
+    const nombrePila = extraerTag(dipXml, "Nombre");
+    const apellidoPaterno = extraerTag(dipXml, "ApellidoPaterno");
+    const apellidoMaterno = extraerTag(dipXml, "ApellidoMaterno");
+    const distrito = distritoXml ? parseInt(extraerTag(distritoXml, "Numero"), 10) || null : null;
+
+    if (!id || !apellidoPaterno || !nombrePila) return;
+
+    const nombreCompleto = [nombrePila, apellidoPaterno, apellidoMaterno]
+      .filter(Boolean)
+      .join(" ");
+
+    const info = { id, nombre: nombreCompleto, apellidoPaterno, nombrePila, distrito };
+    lista.push(info);
+
+    const clave = claveNombre(apellidoPaterno, nombrePila);
+    // Si dos diputados comparten apellido paterno + nombre exactos (raro),
+    // nos quedamos con el primero; no debería afectar el conteo en la práctica.
+    if (!porClave.has(clave)) porClave.set(clave, info);
+  });
+
+  return { lista, porClave };
+}
+
 export default async function handler(req, res) {
   const anno = parseInt(req.query.anno, 10) || new Date().getFullYear();
 
-  // El período legislativo 2026-2030 (de estos 5 diputados del Distrito 21)
-  // comenzó el 11 de marzo de 2026. Antes de esa fecha, el distrito tenía
-  // otros representantes (período 2022-2026) — por eso se excluyen esas
-  // mociones de enero/febrero, aunque retornarMocionesXAnno las incluya
-  // por venir dentro del mismo año calendario.
+  // El período legislativo 2026-2030 comenzó el 11 de marzo de 2026. Antes de
+  // esa fecha había otros representantes — por eso se excluyen esas mociones
+  // de enero/febrero, aunque retornarMocionesXAnno las incluya por venir
+  // dentro del mismo año calendario.
   const INICIO_PERIODO = new Date("2026-03-11T00:00:00");
 
   try {
+    // 0. Lista de los 155 diputados actuales (para el ranking general)
+    let diputadosActuales = { lista: [], porClave: new Map() };
+    let errorDiputados = null;
+    try {
+      diputadosActuales = await obtenerDiputadosActuales();
+    } catch (e) {
+      // Si esto falla, seguimos igual con el ranking del Distrito 21
+      // (que no depende de esta llamada), y el general queda vacío.
+      errorDiputados = e.message;
+    }
+
     // 1. Lista completa de mociones del año
     const listaXML = await fetchXML(`${BASE}/retornarMocionesXAnno?prmAnno=${anno}`);
     const proyectos = extraerTags(listaXML, "ProyectoLey");
 
     // Solo nos interesan las mociones originadas en la Cámara de Diputados
-    // (las del Senado no las firman diputados de la Cámara) Y presentadas
-    // dentro del período legislativo actual (desde el 11-03-2026 en adelante).
+    // Y presentadas dentro del período legislativo actual.
     const boletines = proyectos
       .filter((p) => extraerTag(p, "CamaraOrigen").includes("Cámara"))
       .filter((p) => {
@@ -86,9 +148,13 @@ export default async function handler(req, res) {
       .map((p) => extraerTag(p, "NumeroBoletin"))
       .filter(Boolean);
 
-    // Conteo inicial en 0 para los 5 diputados
+    // Conteo Distrito 21 (igual que siempre)
     const conteo = {};
     DIPUTADOS_DISTRITO_21.forEach((d) => (conteo[d.nombre] = 0));
+
+    // Conteo general, indexado por Id de diputado
+    const conteoGeneral = {};
+    diputadosActuales.lista.forEach((d) => (conteoGeneral[d.id] = 0));
 
     // 2. Por cada boletín, pedir detalle y revisar autores
     //    (en tandas para no saturar la API de golpe)
@@ -103,16 +169,22 @@ export default async function handler(req, res) {
             );
             const autoresXML = extraerTags(detalleXML, "Diputado"); // autores diputados (no Senador)
             autoresXML.forEach((autorXML) => {
-              const apellido = normalizar(extraerTag(autorXML, "ApellidoPaterno"));
-              const nombrePila = normalizar(extraerTag(autorXML, "Nombre"));
+              const apellido = extraerTag(autorXML, "ApellidoPaterno");
+              const nombrePila = extraerTag(autorXML, "Nombre");
+
+              // -- Distrito 21 (lógica original, intacta) --
+              const apellidoN = normalizar(apellido);
+              const nombreN = normalizar(nombrePila);
               DIPUTADOS_DISTRITO_21.forEach((d) => {
-                if (
-                  normalizar(d.apellidoPaterno) === apellido &&
-                  normalizar(d.nombrePila) === nombrePila
-                ) {
+                if (normalizar(d.apellidoPaterno) === apellidoN && normalizar(d.nombrePila) === nombreN) {
                   conteo[d.nombre]++;
                 }
               });
+
+              // -- General (155 diputados) --
+              const clave = claveNombre(apellido, nombrePila);
+              const dip = diputadosActuales.porClave.get(clave);
+              if (dip) conteoGeneral[dip.id]++;
             });
           } catch (e) {
             // Si un boletín individual falla, lo ignoramos y seguimos
@@ -127,11 +199,23 @@ export default async function handler(req, res) {
       mociones: conteo[d.nombre],
     }));
 
+    const rankingGeneral = diputadosActuales.lista
+      .map((d) => ({
+        id: d.id,
+        nombre: d.nombre,
+        distrito: d.distrito,
+        mociones: conteoGeneral[d.id] || 0,
+        esPinilla: d.distrito === 21 && normalizar(d.apellidoPaterno) === "pinilla",
+      }))
+      .sort((a, b) => b.mociones - a.mociones);
+
     res.status(200).json({
       actualizado: new Date().toISOString(),
       anno,
       totalMocionesRevisadas: boletines.length,
       ranking,
+      rankingGeneral,
+      errorDiputados: errorDiputados || undefined,
     });
   } catch (error) {
     res.status(200).json({
