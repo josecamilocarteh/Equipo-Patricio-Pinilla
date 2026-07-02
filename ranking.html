@@ -18,8 +18,7 @@
   :root{
     --ink:#16243a; --ink2:#1f3552;
     --bg:#e9edf2; --card:#ffffff;
-    --teal:#0f766e; --amber:#d98324;
-    --blue:#1e3a5f;
+    --blue:#1e3a5f; --amber:#d98324;
     --text:#2b3a4f; --muted:#7c8aa0; --line:#dde3ec;
     --shadow:0 1px 3px rgba(22,36,58,.07), 0 10px 30px rgba(22,36,58,.06);
     --you-bg:#fff6e9; --you-line:#e9c584;
@@ -43,7 +42,7 @@
     content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;
     background:linear-gradient(90deg,var(--amber) 0%, var(--amber) 64px, transparent 64px);
   }
-  .mast-inner{max-width:920px;margin:0 auto}
+  .mast-inner{max-width:980px;margin:0 auto}
   .back-link{
     display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
     color:#b9c7dc;margin-bottom:16px;
@@ -57,58 +56,85 @@
     font-family:'Fraunces',Georgia,serif;font-weight:600;
     font-size:clamp(26px,5vw,38px);line-height:1.05;letter-spacing:-.01em;color:#fff;
   }
-  .mast-sub{margin-top:10px;font-size:14.5px;color:#b9c7dc;max-width:560px}
+  .mast-sub{margin-top:10px;font-size:14.5px;color:#b9c7dc;max-width:600px}
 
-  .layout{flex:1;max-width:920px;width:100%;margin:0 auto;padding:28px 24px 40px}
+  .layout{flex:1;max-width:980px;width:100%;margin:0 auto;padding:28px 24px 40px}
 
   .summary{
-    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(135deg, #fff 0%, #fdf6ea 100%);
+    border:1px solid var(--you-line);border-radius:16px;
     padding:20px 22px;box-shadow:var(--shadow);margin-bottom:22px;
     display:flex;gap:18px;flex-wrap:wrap;align-items:center;justify-content:space-between;
   }
   .summary-you{display:flex;align-items:center;gap:14px}
   .summary-you .badge{
-    width:48px;height:48px;border-radius:50%;background:var(--blue);color:#fff;
-    display:grid;place-items:center;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:18px;
-    flex-shrink:0;
+    width:52px;height:52px;border-radius:50%;background:var(--blue);color:#fff;
+    display:grid;place-items:center;font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:19px;
+    flex-shrink:0;box-shadow:0 4px 10px rgba(30,58,95,.35);
   }
-  .summary-you h2{font-size:15.5px;color:var(--ink);font-weight:700}
+  .summary-you h2{font-size:16px;color:var(--ink);font-weight:700}
   .summary-you p{font-size:13px;color:var(--muted);margin-top:2px}
   .summary-you .pos{color:var(--blue);font-weight:700}
   .summary-fecha{font-size:12px;color:var(--muted)}
 
-  .search-row{margin-bottom:14px}
-  .search-row input{
-    width:100%;border:1px solid var(--line);border-radius:12px;padding:11px 14px;
-    font-size:14.5px;font-family:inherit;color:var(--text);background:var(--card);
+  .filters{
+    display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;
+  }
+  .filters input, .filters select{
+    border:1px solid var(--line);border-radius:12px;padding:11px 14px;
+    font-size:14px;font-family:inherit;color:var(--text);background:var(--card);
     box-shadow:var(--shadow);
   }
-  .search-row input:focus{outline:2px solid var(--blue);outline-offset:1px}
+  .filters input{flex:2;min-width:200px}
+  .filters select{flex:1;min-width:170px;cursor:pointer}
+  .filters input:focus, .filters select:focus{outline:2px solid var(--blue);outline-offset:1px}
+
+  .count-line{font-size:12.5px;color:var(--muted);margin-bottom:10px}
 
   table{width:100%;border-collapse:collapse;background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
   thead th{
     text-align:left;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
-    color:var(--muted);padding:12px 16px;border-bottom:1px solid var(--line);background:#f6f8fb;
+    color:var(--muted);padding:12px 14px;border-bottom:1px solid var(--line);background:#f6f8fb;
   }
   thead th.num, tbody td.num{text-align:right}
-  tbody td{padding:11px 16px;font-size:13.5px;border-bottom:1px solid var(--line)}
+  tbody td{padding:10px 14px;font-size:13.5px;border-bottom:1px solid var(--line);vertical-align:middle}
   tbody tr:last-child td{border-bottom:none}
   tbody tr.you{background:var(--you-bg)}
   tbody tr.you td{border-color:var(--you-line)}
-  .pos-cell{color:var(--muted);font-variant-numeric:tabular-nums;width:42px}
+  tbody tr{border-left:4px solid transparent}
+
+  .pos-cell{color:var(--muted);font-variant-numeric:tabular-nums;width:44px;font-weight:600}
+  .pos-cell .medal{font-size:16px}
   .nombre-cell{font-weight:600;color:var(--ink);display:flex;align-items:center;gap:8px}
   .you-tag{
     font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
     color:#fff;background:var(--blue);border-radius:5px;padding:1px 6px;
   }
+  .partido-pill{
+    display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
+    padding:3px 9px;border-radius:999px;color:#fff;white-space:nowrap;
+  }
   .mociones-cell{font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;text-align:right}
-  .distrito-cell{color:var(--muted)}
 
   .estado{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
 
+  .legend{
+    margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;
+  }
+  .legend-item{
+    display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);
+    background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;
+  }
+  .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
   footer{
-    max-width:920px;margin:0 auto;width:100%;padding:20px 24px 34px;
+    max-width:980px;margin:0 auto;width:100%;padding:20px 24px 34px;
     border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.7;
+  }
+
+  @media(max-width:640px){
+    .distrito-hide{display:none}
+    thead th, tbody td{padding:9px 10px}
   }
 </style>
 </head>
@@ -138,40 +164,78 @@
       <div class="summary-fecha" id="summaryFecha"></div>
     </div>
 
-    <div class="search-row">
-      <input type="text" id="buscador" placeholder="Buscar diputado, partido o distrito..." autocomplete="off">
+    <div class="filters">
+      <input type="text" id="buscador" placeholder="Buscar diputado/a..." autocomplete="off">
+      <select id="filtroPartido">
+        <option value="">Todos los partidos</option>
+      </select>
     </div>
+
+    <div class="count-line" id="countLine"></div>
 
     <div id="contenido">
       <div class="estado">Cargando ranking…</div>
     </div>
+
+    <div class="legend" id="legend"></div>
   </div>
 
   <footer>
     Fuente: Cámara de Diputadas y Diputados de Chile (camara.cl), Datos Abiertos. Se actualiza automáticamente una vez al día.
+    <br>Nota: la API no entrega el distrito de cada parlamentario en esta consulta, por eso no aparece en la tabla.
   </footer>
 
   <script>
     let DATA = [];
 
+    // Paleta por alias de partido. Lo que no está en esta lista recibe un
+    // color generado automáticamente (hash simple) para que igual se vea bien.
+    const COLOR_PARTIDO = {
+      PC: "#B91C1C", PS: "#DC2626", FA: "#7C3AED", PPD: "#F97316",
+      PR: "#EA580C", DC: "#059669", PCS: "#9333EA", COMUNES: "#A855F7",
+      PAH: "#C026D3", PH: "#D946EF", FRVS: "#16A34A", IND: "#6B7280",
+      RN: "#2563EB", UDI: "#1D4ED8", EVOP: "#0EA5E9", PREP: "#1E293B",
+      PNL: "#78350F", PDG: "#CA8A04", PSC: "#0D9488", PCC: "#0F766E",
+      PL: "#F59E0B", LIBERAL: "#F59E0B", DEM: "#4B5563", PRO: "#DB2777",
+      RD: "#8B5CF6", PRI: "#EA580C",
+    };
+    function colorPartido(alias) {
+      if (!alias) return "#94A3B8";
+      if (COLOR_PARTIDO[alias]) return COLOR_PARTIDO[alias];
+      // Hash simple para partidos no listados: siempre el mismo color para el mismo alias.
+      let hash = 0;
+      for (let i = 0; i < alias.length; i++) hash = alias.charCodeAt(i) + ((hash << 5) - hash);
+      const hue = Math.abs(hash) % 360;
+      return `hsl(${hue}, 55%, 42%)`;
+    }
+    const MEDALLA = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
     function render(lista) {
       const contenido = document.getElementById("contenido");
+      document.getElementById("countLine").textContent =
+        lista.length === DATA.length ? `${DATA.length} diputados y diputadas` : `${lista.length} de ${DATA.length}`;
+
       if (!lista.length) {
         contenido.innerHTML = '<div class="estado">No se encontraron diputados con ese criterio.</div>';
         return;
       }
       const filas = lista.map((d) => {
         const esPinilla = !!d.esPinilla;
+        const alias = d.partido ? d.partido.alias : null;
+        const color = colorPartido(alias);
+        const medalla = MEDALLA[d.posicion] || "";
         return `
-          <tr class="${esPinilla ? "you" : ""}">
-            <td class="pos-cell">${d.posicion}</td>
+          <tr class="${esPinilla ? "you" : ""}" style="border-left-color:${color}">
+            <td class="pos-cell">${medalla ? `<span class="medal">${medalla}</span>` : d.posicion}</td>
             <td>
               <span class="nombre-cell">
                 ${d.nombre}
                 ${esPinilla ? '<span class="you-tag">Nuestro diputado</span>' : ''}
               </span>
             </td>
-            <td class="distrito-cell">${d.distrito != null ? "Distrito " + d.distrito : "—"}</td>
+            <td>
+              ${alias ? `<span class="partido-pill" style="background:${color}">${alias}</span>` : '<span style="color:var(--muted)">—</span>'}
+            </td>
             <td class="mociones-cell">${d.mociones}</td>
           </tr>
         `;
@@ -183,7 +247,7 @@
             <tr>
               <th class="num">#</th>
               <th>Diputado/a</th>
-              <th>Distrito</th>
+              <th>Partido</th>
               <th class="num">Mociones</th>
             </tr>
           </thead>
@@ -192,13 +256,41 @@
       `;
     }
 
-    function aplicarBusqueda() {
+    function poblarFiltroPartidos() {
+      const select = document.getElementById("filtroPartido");
+      const partidos = new Map(); // alias -> nombre completo
+      DATA.forEach((d) => {
+        if (d.partido && d.partido.alias) partidos.set(d.partido.alias, d.partido.nombre || d.partido.alias);
+      });
+      const ordenados = [...partidos.entries()].sort((a, b) => a[1].localeCompare(b[1], "es"));
+      ordenados.forEach(([alias, nombre]) => {
+        const opt = document.createElement("option");
+        opt.value = alias;
+        opt.textContent = `${nombre} (${alias})`;
+        select.appendChild(opt);
+      });
+    }
+
+    function renderLeyenda() {
+      const partidos = new Map();
+      DATA.forEach((d) => {
+        if (d.partido && d.partido.alias) partidos.set(d.partido.alias, d.partido.nombre || d.partido.alias);
+      });
+      const ordenados = [...partidos.entries()].sort((a, b) => a[0].localeCompare(b[0], "es"));
+      document.getElementById("legend").innerHTML = ordenados.map(([alias, nombre]) => `
+        <span class="legend-item">
+          <span class="legend-dot" style="background:${colorPartido(alias)}"></span>
+          ${alias}
+        </span>
+      `).join("");
+    }
+
+    function aplicarFiltros() {
       const q = document.getElementById("buscador").value.trim().toLowerCase();
-      if (!q) return render(DATA);
-      const filtrado = DATA.filter((d) =>
-        d.nombre.toLowerCase().includes(q) ||
-        (d.distrito != null && ("distrito " + d.distrito).includes(q))
-      );
+      const partido = document.getElementById("filtroPartido").value;
+      let filtrado = DATA;
+      if (q) filtrado = filtrado.filter((d) => d.nombre.toLowerCase().includes(q));
+      if (partido) filtrado = filtrado.filter((d) => d.partido && d.partido.alias === partido);
       render(filtrado);
     }
 
@@ -228,6 +320,8 @@
           .map((d, i) => ({ ...d, posicion: i + 1 }));
 
         DATA = ordenado;
+        poblarFiltroPartidos();
+        renderLeyenda();
         render(DATA);
         renderResumen(ordenado, data.actualizado);
       } catch (e) {
@@ -236,7 +330,8 @@
       }
     }
 
-    document.getElementById("buscador").addEventListener("input", aplicarBusqueda);
+    document.getElementById("buscador").addEventListener("input", aplicarFiltros);
+    document.getElementById("filtroPartido").addEventListener("change", aplicarFiltros);
     cargar();
   </script>
 
