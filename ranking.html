@@ -42,7 +42,7 @@
     content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;
     background:linear-gradient(90deg,var(--amber) 0%, var(--amber) 64px, transparent 64px);
   }
-  .mast-inner{max-width:980px;margin:0 auto}
+  .mast-inner{max-width:1040px;margin:0 auto}
   .back-link{
     display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
     color:#b9c7dc;margin-bottom:16px;
@@ -58,7 +58,7 @@
   }
   .mast-sub{margin-top:10px;font-size:14.5px;color:#b9c7dc;max-width:600px}
 
-  .layout{flex:1;max-width:980px;width:100%;margin:0 auto;padding:28px 24px 40px}
+  .layout{flex:1;max-width:1040px;width:100%;margin:0 auto;padding:28px 24px 40px}
 
   .summary{
     background:linear-gradient(135deg, #fff 0%, #fdf6ea 100%);
@@ -86,7 +86,7 @@
     box-shadow:var(--shadow);
   }
   .filters input{flex:2;min-width:200px}
-  .filters select{flex:1;min-width:170px;cursor:pointer}
+  .filters select{flex:1;min-width:150px;cursor:pointer}
   .filters input:focus, .filters select:focus{outline:2px solid var(--blue);outline-offset:1px}
 
   .count-line{font-size:12.5px;color:var(--muted);margin-bottom:10px}
@@ -112,15 +112,14 @@
   }
   .partido-pill{
     display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;
-    padding:3px 9px;border-radius:999px;color:#fff;white-space:nowrap;
+    padding:3px 9px;border-radius:999px;color:#1a1a1a;white-space:nowrap;
   }
+  .distrito-cell{color:var(--muted);white-space:nowrap}
   .mociones-cell{font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;text-align:right}
 
   .estado{padding:40px 20px;text-align:center;color:var(--muted);font-size:14px}
 
-  .legend{
-    margin-top:22px;display:flex;flex-wrap:wrap;gap:8px;
-  }
+  .legend{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
   .legend-item{
     display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);
     background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;
@@ -128,13 +127,13 @@
   .legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
   footer{
-    max-width:980px;margin:0 auto;width:100%;padding:20px 24px 34px;
+    max-width:1040px;margin:0 auto;width:100%;padding:20px 24px 34px;
     border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);line-height:1.7;
   }
 
   @media(max-width:640px){
-    .distrito-hide{display:none}
     thead th, tbody td{padding:9px 10px}
+    .distrito-hide{display:none}
   }
 </style>
 </head>
@@ -169,6 +168,9 @@
       <select id="filtroPartido">
         <option value="">Todos los partidos</option>
       </select>
+      <select id="filtroDistrito">
+        <option value="">Todos los distritos</option>
+      </select>
     </div>
 
     <div class="count-line" id="countLine"></div>
@@ -181,32 +183,41 @@
   </div>
 
   <footer>
-    Fuente: Cámara de Diputadas y Diputados de Chile (camara.cl), Datos Abiertos. Se actualiza automáticamente una vez al día.
-    <br>Nota: la API no entrega el distrito de cada parlamentario en esta consulta, por eso no aparece en la tabla.
+    Fuente: mociones desde la API de la Cámara de Diputadas y Diputados de Chile (camara.cl), actualizadas automáticamente una vez al día. Distrito y partido desde dataset curado (mismo usado en congreso-chile.vercel.app).
   </footer>
 
   <script>
     let DATA = [];
 
-    // Paleta por alias de partido. Lo que no está en esta lista recibe un
-    // color generado automáticamente (hash simple) para que igual se vea bien.
-    const COLOR_PARTIDO = {
-      PC: "#B91C1C", PS: "#DC2626", FA: "#7C3AED", PPD: "#F97316",
-      PR: "#EA580C", DC: "#059669", PCS: "#9333EA", COMUNES: "#A855F7",
-      PAH: "#C026D3", PH: "#D946EF", FRVS: "#16A34A", IND: "#6B7280",
-      RN: "#2563EB", UDI: "#1D4ED8", EVOP: "#0EA5E9", PREP: "#1E293B",
-      PNL: "#78350F", PDG: "#CA8A04", PSC: "#0D9488", PCC: "#0F766E",
-      PL: "#F59E0B", LIBERAL: "#F59E0B", DEM: "#4B5563", PRO: "#DB2777",
-      RD: "#8B5CF6", PRI: "#EA580C",
+    // Misma paleta que usa https://congreso-chile.vercel.app (PARTIDO_COLORS)
+    const PARTIDO_COLORS = {
+      'RN': '#1d6fce',
+      'UDI': '#f59e0b',
+      'Republicano': '#1e3a8a',
+      'Evópoli': '#06b6d4',
+      'DEM': '#9ca3af',
+      'PS': '#dc2626',
+      'PPD': '#f97316',
+      'PDC': '#e879a0',
+      'PC': '#7f1d1d',
+      'FA': '#7c3aed',
+      'FREVS': '#22c55e',
+      'Liberal': '#fbbf24',
+      'Independiente': '#e5e7eb',
+      'PDG': '#ea580c',
+      'PNL': '#0ea5e9',
+      'AH': '#10b981',
+      'PSC': '#f43f5e',
     };
-    function colorPartido(alias) {
-      if (!alias) return "#94A3B8";
-      if (COLOR_PARTIDO[alias]) return COLOR_PARTIDO[alias];
-      // Hash simple para partidos no listados: siempre el mismo color para el mismo alias.
-      let hash = 0;
-      for (let i = 0; i < alias.length; i++) hash = alias.charCodeAt(i) + ((hash << 5) - hash);
-      const hue = Math.abs(hash) % 360;
-      return `hsl(${hue}, 55%, 42%)`;
+    // Colores oscuros para texto sobre píldoras claras (Independiente, Liberal, DEM)
+    const TEXTO_CLARO = new Set(['Independiente', 'Liberal', 'DEM']);
+
+    function colorPartido(partido) {
+      if (!partido) return '#94A3B8';
+      return PARTIDO_COLORS[partido] || '#64748B';
+    }
+    function colorTexto(partido) {
+      return TEXTO_CLARO.has(partido) ? '#1a1a1a' : '#ffffff';
     }
     const MEDALLA = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
@@ -221,8 +232,7 @@
       }
       const filas = lista.map((d) => {
         const esPinilla = !!d.esPinilla;
-        const alias = d.partido ? d.partido.alias : null;
-        const color = colorPartido(alias);
+        const color = colorPartido(d.partido);
         const medalla = MEDALLA[d.posicion] || "";
         return `
           <tr class="${esPinilla ? "you" : ""}" style="border-left-color:${color}">
@@ -234,8 +244,9 @@
               </span>
             </td>
             <td>
-              ${alias ? `<span class="partido-pill" style="background:${color}">${alias}</span>` : '<span style="color:var(--muted)">—</span>'}
+              ${d.partido ? `<span class="partido-pill" style="background:${color};color:${colorTexto(d.partido)}">${d.partido}</span>` : '<span style="color:var(--muted)">—</span>'}
             </td>
+            <td class="distrito-cell">${d.distrito ? "Distrito " + d.distrito : "—"}</td>
             <td class="mociones-cell">${d.mociones}</td>
           </tr>
         `;
@@ -248,6 +259,7 @@
               <th class="num">#</th>
               <th>Diputado/a</th>
               <th>Partido</th>
+              <th class="distrito-hide">Distrito</th>
               <th class="num">Mociones</th>
             </tr>
           </thead>
@@ -256,31 +268,35 @@
       `;
     }
 
-    function poblarFiltroPartidos() {
-      const select = document.getElementById("filtroPartido");
-      const partidos = new Map(); // alias -> nombre completo
-      DATA.forEach((d) => {
-        if (d.partido && d.partido.alias) partidos.set(d.partido.alias, d.partido.nombre || d.partido.alias);
-      });
-      const ordenados = [...partidos.entries()].sort((a, b) => a[1].localeCompare(b[1], "es"));
-      ordenados.forEach(([alias, nombre]) => {
+    function poblarFiltros() {
+      const selectPartido = document.getElementById("filtroPartido");
+      const partidos = [...new Set(DATA.filter((d) => d.partido).map((d) => d.partido))]
+        .sort((a, b) => a.localeCompare(b, "es"));
+      partidos.forEach((p) => {
         const opt = document.createElement("option");
-        opt.value = alias;
-        opt.textContent = `${nombre} (${alias})`;
-        select.appendChild(opt);
+        opt.value = p;
+        opt.textContent = p;
+        selectPartido.appendChild(opt);
+      });
+
+      const selectDistrito = document.getElementById("filtroDistrito");
+      const distritos = [...new Set(DATA.filter((d) => d.distrito).map((d) => d.distrito))]
+        .sort((a, b) => a - b);
+      distritos.forEach((n) => {
+        const opt = document.createElement("option");
+        opt.value = n;
+        opt.textContent = "Distrito " + n;
+        selectDistrito.appendChild(opt);
       });
     }
 
     function renderLeyenda() {
-      const partidos = new Map();
-      DATA.forEach((d) => {
-        if (d.partido && d.partido.alias) partidos.set(d.partido.alias, d.partido.nombre || d.partido.alias);
-      });
-      const ordenados = [...partidos.entries()].sort((a, b) => a[0].localeCompare(b[0], "es"));
-      document.getElementById("legend").innerHTML = ordenados.map(([alias, nombre]) => `
+      const partidos = [...new Set(DATA.filter((d) => d.partido).map((d) => d.partido))]
+        .sort((a, b) => a.localeCompare(b, "es"));
+      document.getElementById("legend").innerHTML = partidos.map((p) => `
         <span class="legend-item">
-          <span class="legend-dot" style="background:${colorPartido(alias)}"></span>
-          ${alias}
+          <span class="legend-dot" style="background:${colorPartido(p)}"></span>
+          ${p}
         </span>
       `).join("");
     }
@@ -288,9 +304,11 @@
     function aplicarFiltros() {
       const q = document.getElementById("buscador").value.trim().toLowerCase();
       const partido = document.getElementById("filtroPartido").value;
+      const distrito = document.getElementById("filtroDistrito").value;
       let filtrado = DATA;
       if (q) filtrado = filtrado.filter((d) => d.nombre.toLowerCase().includes(q));
-      if (partido) filtrado = filtrado.filter((d) => d.partido && d.partido.alias === partido);
+      if (partido) filtrado = filtrado.filter((d) => d.partido === partido);
+      if (distrito) filtrado = filtrado.filter((d) => String(d.distrito) === distrito);
       render(filtrado);
     }
 
@@ -320,7 +338,7 @@
           .map((d, i) => ({ ...d, posicion: i + 1 }));
 
         DATA = ordenado;
-        poblarFiltroPartidos();
+        poblarFiltros();
         renderLeyenda();
         render(DATA);
         renderResumen(ordenado, data.actualizado);
@@ -332,6 +350,7 @@
 
     document.getElementById("buscador").addEventListener("input", aplicarFiltros);
     document.getElementById("filtroPartido").addEventListener("change", aplicarFiltros);
+    document.getElementById("filtroDistrito").addEventListener("change", aplicarFiltros);
     cargar();
   </script>
 
