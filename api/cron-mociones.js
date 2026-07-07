@@ -1,16 +1,6 @@
 // /api/cron-mociones.js
-//
-// Esta función la ejecuta Vercel Cron una vez al día (configurado en vercel.json).
-// Llama al endpoint /api/contar-mociones y guarda AMBOS rankings en un Gist
-// de GitHub para que la página pública los pueda leer al instante.
-//
-// Variables de entorno necesarias (en Vercel → Settings → Environment Variables):
-//   GITHUB_TOKEN  → token personal de GitHub con permiso "gist"
-//   GIST_ID       → ID del Gist donde se guardan los archivos .json
-//   CRON_SECRET   → clave secreta para poder probar manualmente con ?secreto=TU_CLAVE
 
 export default async function handler(req, res) {
-  // Seguridad: deja pasar a Vercel Cron O a quien conozca la clave secreta
   const esVercelCron = req.headers["x-vercel-cron"] !== undefined;
   const claveCorrecta =
     process.env.CRON_SECRET && req.query.secreto === process.env.CRON_SECRET;
@@ -22,23 +12,21 @@ export default async function handler(req, res) {
   try {
     const anno = new Date().getFullYear();
 
-    // Llamar directamente al endpoint de conteo via fetch
-    // (evita el patrón fake que puede tener problemas de timing con async)
-    const base = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000";
+    // URL fija de producción para el fetch interno
+    const conteoRes = await fetch(
+      `https://equipo-patricio-pinilla.vercel.app/api/contar-mociones?anno=${anno}`
+    );
 
-    const conteoRes = await fetch(`${base}/api/contar-mociones?anno=${anno}`);
     if (!conteoRes.ok) {
       throw new Error(`Error al llamar contar-mociones: HTTP ${conteoRes.status}`);
     }
+
     const resultado = await conteoRes.json();
 
     if (resultado.error) {
       return res.status(200).json({ ok: false, detalle: resultado });
     }
 
-    // Verificar que llegaron los datos necesarios
     if (!resultado.ranking || !resultado.rankingGeneral) {
       return res.status(200).json({
         ok: false,
@@ -47,7 +35,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Separar lo que va a cada archivo del Gist
     const distrito21 = {
       actualizado: resultado.actualizado,
       anno: resultado.anno,
@@ -62,7 +49,6 @@ export default async function handler(req, res) {
       ranking: resultado.rankingGeneral,
     };
 
-    // Guardar ambos archivos en el Gist en una sola escritura
     const gistRes = await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
       method: "PATCH",
       headers: {
