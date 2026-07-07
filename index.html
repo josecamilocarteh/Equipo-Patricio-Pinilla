@@ -22,44 +22,31 @@
     --teal:#0f766e; --teal-d:#0b5b54;
     --blue:#1e3a5f; --blue-d:#16294a;
     --amber:#d98324;
-
-    /* Colores por botón */
     --yellow:#c9941f; --yellow-d:#a87a14;
     --pink:#c2447a; --pink-d:#a13564;
     --red:#c23b3b; --red-d:#a32e2e;
     --green:#2f8f4e; --green-d:#226e3a;
-
-    /* Colores del ranking (uno por diputado) */
     --rk-pinilla:#1e3a5f;
     --rk-perez:#0f766e;
     --rk-weisse:#c2447a;
     --rk-urruti:#c9941f;
     --rk-betancurt:#7a4fc2;
-
     --text:#2b3a4f; --muted:#7c8aa0; --line:#dde3ec;
     --shadow:0 1px 3px rgba(22,36,58,.07), 0 10px 30px rgba(22,36,58,.06);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:'Inter',system-ui,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
+    background:var(--bg); color:var(--text); line-height:1.5;
+    -webkit-font-smoothing:antialiased; min-height:100vh;
     display:flex;flex-direction:column;
   }
   a{text-decoration:none;color:inherit}
-
-  /* ===== Masthead ===== */
   .masthead{
     background:
       radial-gradient(120% 140% at 85% -10%, #243a5c 0%, transparent 55%),
       linear-gradient(180deg,var(--ink) 0%, var(--ink2) 100%);
-    color:#fff;
-    padding:44px 24px 38px;
-    position:relative;
-    overflow:hidden;
+    color:#fff; padding:44px 24px 38px; position:relative; overflow:hidden;
   }
   .masthead::after{
     content:"";position:absolute;left:24px;right:24px;bottom:0;height:3px;
@@ -67,8 +54,7 @@
   }
   .mast-inner{
     max-width:1180px;margin:0 auto;
-    display:flex;align-items:center;justify-content:space-between;gap:18px;
-    flex-wrap:wrap;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
   }
   .mast-left{flex:1;min-width:240px}
   .mast-right{display:flex;align-items:center;gap:14px;flex-shrink:0}
@@ -79,13 +65,8 @@
     border:2px solid rgba(255,255,255,.55);
     box-shadow:0 4px 14px rgba(0,0,0,.22);
   }
-  @media(max-width:640px){
-    .mast-photo{width:48px;height:48px}
-  }
-  @media(max-width:480px){
-    .mast-photo{width:42px;height:42px}
-    .mast-right{gap:10px}
-  }
+  @media(max-width:640px){ .mast-photo{width:48px;height:48px} }
+  @media(max-width:480px){ .mast-photo{width:42px;height:42px} .mast-right{gap:10px} }
   .eyebrow{
     font-size:12px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
     color:#9fb4d0;margin-bottom:10px;
@@ -95,8 +76,6 @@
     font-weight:600;font-size:clamp(30px,6vw,46px);line-height:1.02;
     letter-spacing:-.01em;color:#fff;
   }
-  @media(max-width:480px){
-    }
   .mast-sub{
     margin-top:12px;font-size:14.5px;color:#b9c7dc;font-weight:400;
     display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;
@@ -106,18 +85,11 @@
     display:inline-block;border:1px solid #3a5079;color:#cdd9ea;
     border-radius:999px;padding:3px 11px;font-size:12.5px;font-weight:500;
   }
-
-  /* ===== Layout principal: contenido + panel lateral ===== */
   .layout{
-    flex:1;max-width:1180px;width:100%;margin:0 auto;
-    padding:34px 24px 8px;
-    display:grid;grid-template-columns:1fr 320px;gap:28px;
-    align-items:start;
+    flex:1;max-width:1180px;width:100%;margin:0 auto;padding:34px 24px 8px;
+    display:grid;grid-template-columns:1fr 320px;gap:28px;align-items:start;
   }
-  @media(max-width:980px){
-    .layout{grid-template-columns:1fr}
-  }
-
+  @media(max-width:980px){ .layout{grid-template-columns:1fr} }
   .section-label{
     display:flex;align-items:center;gap:12px;
     font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
@@ -125,17 +97,14 @@
   }
   .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
   .section-label.mt{margin-top:30px}
-
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:640px){.grid{grid-template-columns:1fr}}
-
   .card{
     background:var(--card);border:1px solid var(--line);border-radius:16px;
     padding:22px 22px 20px;display:flex;flex-direction:column;gap:0;
     box-shadow:var(--shadow);position:relative;
     border-left:4px solid var(--accent,var(--teal));
-    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-    outline:none;
+    transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;outline:none;
   }
   .card:hover,.card:focus-visible{
     transform:translateY(-3px);
@@ -156,22 +125,21 @@
     font-size:13px;font-weight:600;color:var(--accent,var(--teal));
   }
   .card .open svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-
-  /* ===== Panel de Ranking de Mociones ===== */
+  .card.wide{padding:0;overflow:hidden}
+  .card.wide .wide-head{padding:22px 22px 14px}
+  .card.wide iframe{width:100%;height:480px;border:none;border-top:1px solid var(--line);display:block}
+  .card.wide .wide-foot{padding:12px 22px}
   .panel{
     background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:22px;box-shadow:var(--shadow);
-    position:sticky;top:24px;
+    padding:22px;box-shadow:var(--shadow);position:sticky;top:24px;
   }
   @media(max-width:980px){ .panel{position:static} }
-
   .panel-head{margin-bottom:4px}
   .panel-head h3{
     font-family:'Fraunces',Georgia,serif;font-weight:600;
     font-size:19px;color:var(--ink);letter-spacing:-.01em;
   }
   .panel-head p{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5}
-
   .rank-list{margin-top:18px;display:flex;flex-direction:column;gap:14px}
   .rank-item{display:flex;flex-direction:column;gap:6px}
   .rank-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
@@ -184,22 +152,18 @@
   .rank-count{font-size:13.5px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
   .rank-track{height:8px;border-radius:6px;background:var(--bg);overflow:hidden}
   .rank-fill{height:100%;border-radius:6px;transition:width .5s ease}
-
   .panel-foot{
     margin-top:18px;padding-top:14px;border-top:1px solid var(--line);
     font-size:11.5px;color:var(--muted);line-height:1.6;
   }
-
-  /* ===== Footer ===== */
+  .panel-foot .ver-general{display:inline-block;margin-top:10px;font-weight:600;color:var(--ink2)}
   footer{
     max-width:1180px;margin:0 auto;width:100%;
-    padding:26px 24px 34px;margin-top:18px;
-    border-top:1px solid var(--line);
+    padding:26px 24px 34px;margin-top:18px;border-top:1px solid var(--line);
     font-size:12.5px;color:var(--muted);line-height:1.7;
   }
   footer b{color:var(--text);font-weight:600}
   footer .src{color:var(--muted)}
-
   @media (prefers-reduced-motion:reduce){
     .card{transition:none}
     .card:hover,.card:focus-visible{transform:none}
@@ -232,11 +196,9 @@
   </header>
 
   <div class="layout">
-    <!-- ===== Columna principal: accesos ===== -->
     <main>
       <div class="section-label">Sala de la Cámara</div>
       <div class="grid">
-
         <a class="card" style="--accent:var(--yellow)" href="https://www.camara.cl/verDoc.aspx?prmId=0&prmTipo=TABLASEMANAL" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h2M14 13h2M8 17h2M14 17h2"/></svg></span>
@@ -245,7 +207,6 @@
           <div class="desc">Los proyectos y materias agendados para las sesiones de Sala de la semana en curso.</div>
           <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-
         <a class="card" style="--accent:var(--pink)" href="https://www.camara.cl/sala/default.aspx" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/><circle cx="12" cy="15" r="2.4"/></svg></span>
@@ -254,12 +215,10 @@
           <div class="desc">El trabajo en Sala de la sesión vigente: orden del día, cuenta y documentos sobre tabla.</div>
           <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-
       </div>
 
       <div class="section-label mt">Citaciones de Comisiones</div>
       <div class="grid">
-
         <a class="card" style="--accent:var(--red)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=1712&prmIdTipo=2101" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg></span>
@@ -268,7 +227,6 @@
           <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
           <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-
         <a class="card" style="--accent:var(--green)" href="https://www.camara.cl/legislacion/comisiones/citaciones.aspx?prmID=4903&prmIdTipo=2101" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v5c0 4.5 3.2 8.3 8 9.8 4.8-1.5 8-5.3 8-9.8V6l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span>
@@ -277,12 +235,10 @@
           <div class="desc">Citaciones de la Comisión: fecha de la próxima sesión y tabla de materias a tratar.</div>
           <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
-
       </div>
 
       <div class="section-label mt">Actividad Legislativa</div>
       <div class="grid">
-
         <a class="card" style="--accent:var(--blue)" href="https://www.camara.cl/diputados/detalle/mociones.aspx?prmId=1241" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="icon"><svg viewBox="0 0 24 24"><path d="M9 2h6l1 4H8l1-4Z"/><path d="M7 6h10l1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L7 6Z"/><path d="M10 11h4M10 15h4"/></svg></span>
@@ -291,22 +247,37 @@
           <div class="desc">Listado oficial de mociones presentadas por el diputado Patricio Pinilla en la Cámara.</div>
           <span class="open">Abrir en camara.cl <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
         </a>
+      </div>
 
+      <div class="section-label mt">Documentos y Minutas</div>
+      <div class="card wide" style="--accent:var(--blue)">
+        <div class="wide-head">
+          <div class="card-top" style="margin-bottom:8px">
+            <span class="icon"><svg viewBox="0 0 24 24"><path d="M9 2h6l1 4H8l1-4Z"/><path d="M7 6h10l1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L7 6Z"/><path d="M10 11h4M10 15h4"/></svg></span>
+            <div><h3>Minutas y Proyectos de Ley</h3><p>Documentos de trabajo del diputado</p></div>
+          </div>
+          <div class="desc">Todas las minutas y proyectos de ley preparados por el equipo, organizados en Google Drive.</div>
+        </div>
+        <iframe src="https://drive.google.com/embeddedfolderview?id=1FUWBY03vu0OmZ9scbvpair4CHcCnmOtw#list" loading="lazy"></iframe>
+        <div class="wide-foot">
+          <a class="open" href="https://drive.google.com/drive/folders/1FUWBY03vu0OmZ9scbvpair4CHcCnmOtw" target="_blank" rel="noopener">
+            Abrir carpeta completa en Google Drive
+            <svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>
+          </a>
+        </div>
       </div>
     </main>
 
-    <!-- ===== Panel lateral: ranking de mociones ===== -->
     <aside class="panel" aria-label="Ranking de mociones del Distrito 21">
       <div class="panel-head">
         <h3>Mociones · Distrito 21</h3>
         <p>Proyectos de ley presentados por cada diputado/a en el período 2026–2030.</p>
       </div>
-
       <div class="rank-list" id="rankList"></div>
-
       <div class="panel-foot">
         Fuente: Cámara de Diputadas y Diputados de Chile (camara.cl). Se actualiza automáticamente una vez al día.
         <div id="rankFecha" style="margin-top:4px;font-weight:600"></div>
+        <a class="ver-general" href="/ranking.html">Ver ranking general (155 diputados) →</a>
       </div>
     </aside>
   </div>
@@ -317,12 +288,6 @@
   </footer>
 
   <script>
-    // ===== Ranking de mociones (Distrito 21) — datos en vivo =====
-    // Se consulta /api/mociones, que lee un Gist actualizado automáticamente
-    // una vez al día por un cron job (ver /api/cron-mociones.js).
-    // Si la consulta falla por cualquier motivo, se usan estos datos de
-    // respaldo (los últimos conocidos a mano) para que el panel nunca quede vacío.
-
     const MOCIONES_RESPALDO = [
       { nombre: "Patricio Pinilla", mociones: 12 },
       { nombre: "Joanna Pérez", mociones: 7 },
@@ -330,8 +295,6 @@
       { nombre: "Cristóbal Urruticoechea", mociones: 4 },
       { nombre: "Lilian Betancurt", mociones: 3 },
     ];
-
-    // Colores por nombre (deben coincidir con las variables --rk-* del CSS)
     const COLOR_POR_NOMBRE = {
       "Patricio Pinilla": "var(--rk-pinilla)",
       "Joanna Pérez": "var(--rk-perez)",
@@ -339,12 +302,10 @@
       "Cristóbal Urruticoechea": "var(--rk-urruti)",
       "Lilian Betancurt": "var(--rk-betancurt)",
     };
-
     function renderRanking(data, actualizado){
       const ordenado = [...data].sort((a,b) => b.mociones - a.mociones);
       const max = Math.max(...ordenado.map(d => d.mociones), 1);
       const list = document.getElementById("rankList");
-
       list.innerHTML = ordenado.map(d => {
         const color = COLOR_POR_NOMBRE[d.nombre] || "var(--muted)";
         const esPinilla = d.nombre === "Patricio Pinilla";
@@ -361,10 +322,8 @@
           <div class="rank-track">
             <div class="rank-fill" style="width:${(d.mociones / max * 100).toFixed(0)}%; background:${color}"></div>
           </div>
-        </div>
-      `;
+        </div>`;
       }).join("");
-
       const footEl = document.getElementById("rankFecha");
       if (footEl && actualizado) {
         const fecha = new Date(actualizado);
@@ -373,7 +332,6 @@
         });
       }
     }
-
     async function cargarRanking(){
       try {
         const resp = await fetch("/api/mociones");
@@ -381,16 +339,13 @@
         if (data.error || !data.ranking) throw new Error(data.mensaje || "Sin datos");
         renderRanking(data.ranking, data.actualizado);
       } catch (e) {
-        // Si falla la API (aún no configurada, o sin conexión), usamos el respaldo.
         renderRanking(MOCIONES_RESPALDO, null);
       }
     }
-
     cargarRanking();
   </script>
 
   <script>
-    // ===== PWA: registrar el service worker (soporte offline) =====
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("/service-worker.js").catch((err) => {
