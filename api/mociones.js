@@ -1,24 +1,16 @@
 // /api/mociones.js
 //
 // Endpoint liviano que consulta el index.html. Solo LEE el contenido ya
-// calculado del Gist (rápido, 1 sola llamada). El cálculo pesado (~300
-// llamadas a la API de la Cámara) lo hace /api/cron-mociones.js una vez al día.
+// calculado del Gist. Si la versión actual es inválida (los 5 del Distrito 21
+// en 0 por una falla de la API de la Cámara), sirve la última versión válida.
+import { leerArchivoValido, validarDistrito21 } from "./_gist.js";
 
 export default async function handler(req, res) {
+  res.setHeader("Cache-Control", "s-maxage=600, stale-while-revalidate=3600");
   try {
-    const gistRes = await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
-
-    if (!gistRes.ok) throw new Error(`Error leyendo Gist: ${gistRes.status}`);
-
-    const gistData = await gistRes.json();
-    const archivo = gistData.files["mociones-distrito21.json"];
-    const contenido = JSON.parse(archivo.content);
-
+    const contenido = await leerArchivoValido("mociones-distrito21.json", validarDistrito21);
     res.status(200).json(contenido);
   } catch (error) {
-    // Si algo falla, devolvemos un error claro en vez de romper la página.
     res.status(200).json({ error: true, mensaje: error.message });
   }
 }
