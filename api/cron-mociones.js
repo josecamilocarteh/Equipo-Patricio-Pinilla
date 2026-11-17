@@ -1,4 +1,5 @@
 // /api/cron-mociones.js
+import { validarRankingGeneral, validarDistrito21 } from "./_gist.js";
 
 export default async function handler(req, res) {
   const esVercelCron = req.headers["x-vercel-cron"] !== undefined;
@@ -48,7 +49,19 @@ export default async function handler(req, res) {
       totalMocionesRevisadas: resultado.totalMocionesRevisadas,
       ranking: resultado.rankingGeneral,
     };
-
+    // No guardar datos que vengan malos desde la API de la Cámara: así el
+    // Gist conserva la última versión buena y la página no se desconfigura.
+    const errorGeneral = validarRankingGeneral(general);
+    const errorD21 = validarDistrito21(distrito21);
+    if (errorGeneral || errorD21) {
+      return res.status(200).json({
+        ok: false,
+        guardado: false,
+        error: "Datos de la Cámara inválidos; no se actualizó el Gist",
+        rankingGeneral: errorGeneral || "ok",
+        distrito21: errorD21 || "ok",
+      });
+    }
     const gistRes = await fetch(`https://api.github.com/gists/${process.env.GIST_ID}`, {
       method: "PATCH",
       headers: {
